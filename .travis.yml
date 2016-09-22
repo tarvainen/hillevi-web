@@ -1,0 +1,28 @@
+language: php
+
+sudo: false
+
+cache:
+  directories:
+    - $HOME/.composer/cache/files
+
+git:
+  depth: 1
+
+services:
+  - mysql
+
+php:
+  - 7.0
+
+env:
+  - SYMFONY_ENV=dev
+
+matrix:
+  fast_finish: true
+
+install:
+  - composer install
+
+before_script:
+  - php bin/console --version
