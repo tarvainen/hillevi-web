@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Util\FS;
 use Namshi\JOSE\SimpleJWS;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
@@ -80,23 +81,30 @@ class CController extends Controller
     protected function renderHTML($module, $file, $out = true)
     {
         $templateFile = sprintf(
-            '%1$s/../%2$s%3$s/%4$s.html',
-            /** 1 */ $this->rootDir(),
-            /** 2 */ self::TEMPLATE_DIR,
-            /** 3 */ $module,
-            /** 4 */ $file
+            '%1$s%2$s/%3$s.html',
+            /** 1 */ self::TEMPLATE_DIR,
+            /** 2 */ $module,
+            /** 3 */ $file
         );
 
-        if (file_exists($templateFile)) {
-            $html = file_get_contents($templateFile);
-        } else {
-            $html = '';
-        }
+        $html = $this->readFile($templateFile);
 
         if ($out === true) {
             return new Response($html);
         } else {
             return $html;
         }
+    }
+
+    /**
+     * Reads the file relative to the root directory and returns it's contents.
+     *
+     * @param   string  $filename
+     *
+     * @return  string
+     */
+    protected function readFile($filename)
+    {
+        return FS::readFile($this->rootDir() . '/../' . $filename);
     }
 }

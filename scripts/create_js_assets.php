@@ -1,5 +1,7 @@
 <?php
 
+require_once 'conf.php';
+
 /**
  * Files to be compressed.
  */
@@ -11,12 +13,12 @@ $jsFiles = array(
 );
 
 $addNodeModule = function(&$name) {
-    $name = dirname(__FILE__) . '/../node_modules/' . $name;
+    $name = ROOT_DIR . 'node_modules/' . $name;
 };
 
 array_walk($jsFiles, $addNodeModule);
 
-$out = dirname(__FILE__) . '/../web/js/vendor.js';
+$out = ROOT_DIR . 'web/js/vendor.js';
 
 echo sprintf("\nGoing to compress the following list of files to the %1\$s:\n%2\$s\n\n", $out, implode("\n", $jsFiles));
 
