@@ -15,27 +15,20 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class TemplateController extends CController
 {
-    const TEMPLATE_DIR = '/client/templates/';
-
     /**
      * Fetches the template from the file. This does not use the Twig template engine, it just
      * reads the HTML file and pukes it out.
      *
-     * @Route("template/{template}")
+     * @Route("template/{module}/{template}")
      * @Method("GET")
+     *
+     * @param string    $module     The module where the file is fetched.
+     * @param string    $template   The template's filename.
      *
      * @return Response
      */
-    public function actionGetTemplate($template)
+    public function actionGetTemplate($module, $template)
     {
-        $templateFile = $this->rootDir() . '/../' .self::TEMPLATE_DIR . $template . '.html';
-
-        if (file_exists($templateFile)) {
-            $html = file_get_contents($templateFile);
-        } else {
-            $html = '';
-        }
-
-        return new Response($html);
+       return $this->renderHTML($module, $template);
     }
 }

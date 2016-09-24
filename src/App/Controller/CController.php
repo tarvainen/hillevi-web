@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use Namshi\JOSE\SimpleJWS;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Base controller for all the other controllers.
@@ -14,6 +15,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
  */
 class CController extends Controller
 {
+    const TEMPLATE_DIR = '/client/templates/';
+
     /**
      * The container for the current user.
      *
@@ -63,5 +66,34 @@ class CController extends Controller
         }
 
         return $this->user;
+    }
+
+    /**
+     * Does a simple page render without any template engines.
+     *
+     * @param string $module
+     * @param string $file
+     * @param string $extension
+     *
+     * @return Response
+     */
+    protected function renderHTML($module, $file, $extension = 'html')
+    {
+        $templateFile = sprintf(
+            '%1$s/../%2$s%3$s/%4$s.%5$s',
+            /** 1 */ $this->rootDir(),
+            /** 2 */ self::TEMPLATE_DIR,
+            /** 3 */ $module,
+            /** 4 */ $file,
+            /** 5 */ $extension
+        );
+
+        if (file_exists($templateFile)) {
+            $html = file_get_contents($templateFile);
+        } else {
+            $html = '';
+        }
+
+        return new Response($html);
     }
 }
