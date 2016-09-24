@@ -17,3 +17,6 @@
 /app/var/jwt/*
 !/app/var/jwt/.gitkeep
 /.idea
+/node_modules/*
+vendor.js
+vendor.css

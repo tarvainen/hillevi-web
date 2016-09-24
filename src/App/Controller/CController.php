@@ -73,19 +73,18 @@ class CController extends Controller
      *
      * @param string $module
      * @param string $file
-     * @param string $extension
+     * @param bool   $out
      *
      * @return Response
      */
-    protected function renderHTML($module, $file, $extension = 'html')
+    protected function renderHTML($module, $file, $out = true)
     {
         $templateFile = sprintf(
-            '%1$s/../%2$s%3$s/%4$s.%5$s',
+            '%1$s/../%2$s%3$s/%4$s.html',
             /** 1 */ $this->rootDir(),
             /** 2 */ self::TEMPLATE_DIR,
             /** 3 */ $module,
-            /** 4 */ $file,
-            /** 5 */ $extension
+            /** 4 */ $file
         );
 
         if (file_exists($templateFile)) {
@@ -94,6 +93,10 @@ class CController extends Controller
             $html = '';
         }
 
-        return new Response($html);
+        if ($out === true) {
+            return new Response($html);
+        } else {
+            return $html;
+        }
     }
 }
