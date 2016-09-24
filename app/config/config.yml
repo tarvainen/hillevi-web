@@ -20,10 +20,12 @@ framework:
     validation:      { enable_annotations: true }
     #serializer:      { enable_annotations: true }
     templating:
-        engines: ['twig']
+        engines: ['php']
     default_locale:  "%locale%"
     trusted_hosts:   ~
     trusted_proxies: ~
+    profiler:
+        collect: false
     session:
         # http://symfony.com/doc/current/reference/configuration/framework.html#handler-id
         handler_id:  session.handler.native_file

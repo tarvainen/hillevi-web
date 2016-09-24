@@ -16,3 +16,4 @@
 /web/bundles/
 /app/var/jwt/*
 !/app/var/jwt/.gitkeep
+/.idea
