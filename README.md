@@ -28,6 +28,14 @@ There are also some other PHP 7 packages which may improve the effectiveness of 
 
 ``apt-get -y install php7.0-mysql php7.0-curl php7.0-gd php7.0-intl php-pear php-imagick php7.0-imap php7.0-mcrypt php-memcache  php7.0-pspell php7.0-recode php7.0-sqlite3 php7.0-tidy php7.0-xmlrpc php7.0-xsl php7.0-mbstring php-gettext``
 
+##Install Hillevi requirements
+You have to install also few modules to make Hillevi run correctly.
+
+1. Install composer ``apt install composer``
+2. Run ``composer install`` in the application root directory to install all the dependencies
+3. Run ``sudo bash init.sh`` to configure the application
+4. Run ``./hillevi.sh`` to run the application
+
 TODO: improve the installation guide
 
 
