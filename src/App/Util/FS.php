@@ -28,6 +28,31 @@ class FS
     }
 
     /**
+     * Reads all files from the directory.
+     *
+     * @param   string  $path
+     * @return  string
+     */
+    public static function readAllFiles($path)
+    {
+        if (self::isDir($path)) {
+            $files = scandir($path);
+
+            $result = '';
+
+            foreach ($files as $file) {
+                if ($file !== '.' && $file !== '..') {
+                    $result .= self::readFile($path . DIRECTORY_SEPARATOR . $file);
+                }
+            }
+
+            return $result;
+        }
+
+        return '';
+    }
+
+    /**
      * Checks whether the file exists or not.
      *
      * @param   string  $filename
@@ -37,5 +62,16 @@ class FS
     public static function isFile($filename)
     {
         return file_exists($filename);
+    }
+
+    /**
+     * Checks whether the directory is a directory.
+     *
+     * @param   string  $dir
+     * @return  bool
+     */
+    public static function isDir($dir)
+    {
+        return is_dir($dir);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Util\FS;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\HttpFoundation\Response;
@@ -30,5 +31,35 @@ class TemplateController extends CController
     public function actionGetTemplate($module, $template)
     {
         return $this->renderHTML($module, $template);
+    }
+
+    /**
+     * Fetches the angular files for the module.
+     *
+     * @Route("ng/{module}")
+     * @Method("GET")
+     *
+     * @param string    $module     The module where the file is fetched.
+     *
+     * @return Response
+     */
+    public function ngAction($module)
+    {
+        return new Response(FS::readAllFiles($this->rootDir() . '/../app/Resources/js/' . $module));
+    }
+
+    /**
+     * Fetches the css files for the module.
+     *
+     * @Route("css/{module}")
+     * @Method("GET")
+     *
+     * @param string    $module     The module where the file is fetched.
+     *
+     * @return Response
+     */
+    public function cssAction($module)
+    {
+        return new Response(FS::readAllFiles($this->rootDir() . '/../app/Resources/css/' . $module));
     }
 }

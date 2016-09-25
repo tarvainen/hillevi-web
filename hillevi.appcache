@@ -1,3 +1,9 @@
 CACHE MANIFEST
 /vendor/js
-# 24.09.2016 14:09:20
+/app/js
+
+NETWORK:
+/template
+/ng
+/css
+# 26.09.2016 02:09:20

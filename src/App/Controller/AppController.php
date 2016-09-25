@@ -27,4 +27,14 @@ class AppController extends CController
     {
         return $this->renderHTML('index', 'index');
     }
+
+    /**
+     * Action which responses just empty page.
+     *
+     * @return Response
+     */
+    public function emptyAction()
+    {
+        return new Response('');
+    }
 }

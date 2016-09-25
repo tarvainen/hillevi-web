@@ -20,4 +20,5 @@
 /node_modules/*
 vendor.js
 vendor.css
+app-files.js
 *.log
