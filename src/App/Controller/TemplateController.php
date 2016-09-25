@@ -29,6 +29,6 @@ class TemplateController extends CController
      */
     public function actionGetTemplate($module, $template)
     {
-       return $this->renderHTML($module, $template);
+        return $this->renderHTML($module, $template);
     }
 }

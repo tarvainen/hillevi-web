@@ -16,7 +16,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class CController extends Controller
 {
-    const TEMPLATE_DIR = '/client/templates/';
+    const TEMPLATE_DIR = '/app/Resources/templates/';
 
     /**
      * The container for the current user.
@@ -76,7 +76,7 @@ class CController extends Controller
      * @param string $file
      * @param bool   $out
      *
-     * @return Response
+     * @return Response|string
      */
     protected function renderHTML($module, $file, $out = true)
     {
