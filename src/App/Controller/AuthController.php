@@ -1,6 +1,8 @@
 <?php
 namespace App\Controller;
 
+use App\Entity\User;
+use App\Util\Password;
 use Namshi\JOSE\SimpleJWS;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -24,7 +26,7 @@ class AuthController extends CController
      *
      * @return JsonResponse
      */
-    public function actionMe()
+    public function meAction()
     {
         return new JsonResponse($this->getUser());
     }
@@ -39,32 +41,48 @@ class AuthController extends CController
      *
      * @return JsonResponse
      */
-    public function actionLogin(Request $request)
+    public function loginAction(Request $request)
     {
         $username = $request->get('username', '');
         $password = $request->get('password', '');
 
         $msg = 'ERR'; // TODO: translate (maybe just change to be more exiting)
 
-        // TODO: Check this in this world
-        if ($username === 'test' && $password === 'test') {
+        /**
+         * @var User $user
+         */
+        $user = $this
+            ->getDoctrine()
+            ->getRepository('App:User')
+            ->findOneBy(['username' => $username])
+        ;
+
+        if (!is_null($user) && Password::test($password, $user->getPassword())) {
             $jws = new SimpleJWS(array(
                 'alg' => 'RS256'
             ));
 
+            /**
+             * Set JWT data here.
+             */
             $jws->setPayload(array(
-                'userId' => 32
+                'uid' => $user->getId(),
+                'firstname' => $user->getFirstname(),
+                'lastname' => $user->getLastname(),
+                'username' => $user->getUsername()
             ));
 
             $key = trim(file_get_contents($this->rootDir() . '/var/jwt/phrase.key'));
 
-            $privateKey = openssl_pkey_get_private('file://' . $this->rootDir() . '/var/jwt/private.pem', $key);
+            $privateKey = openssl_pkey_get_private(
+                'file://' . $this->rootDir() . '/var/jwt/private.pem', $key
+            );
 
             $jws->sign($privateKey);
 
             setcookie('authorization', $jws->getTokenString());
 
-            $msg = 'OK'; // TODO: translate
+            $msg = 'OK';
         }
 
         return new JsonResponse(
@@ -82,14 +100,14 @@ class AuthController extends CController
      *
      * @return JsonResponse
      */
-    public function actionLogout()
+    public function logoutAction()
     {
         unset($_COOKIE['authorization']);
         setcookie('authorization', '', time() - 3600);
 
         return new JsonResponse(
             array(
-                'msg' => 'OK', // TODO: translate
+                'msg' => 'OK',
             )
         );
     }
