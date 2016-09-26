@@ -1,8 +1,3 @@
 app:
     resource: "@App/Controller/"
     type:     annotation
-pageNotFound:
-    path:  "{path}"
-    defaults: { _controller: App:App:empty }
-    requirements:
-        path: .*

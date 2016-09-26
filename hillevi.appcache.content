@@ -1,8 +1,0 @@
-CACHE MANIFEST
-/vendor/js
-/app/js
-
-NETWORK:
-/template
-/ng
-/css
