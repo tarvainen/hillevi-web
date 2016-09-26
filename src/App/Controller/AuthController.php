@@ -47,6 +47,7 @@ class AuthController extends CController
         $password = $request->get('password', '');
 
         $msg = 'ERR'; // TODO: translate (maybe just change to be more exiting)
+        $status = 401;
 
         /**
          * @var User $user
@@ -80,15 +81,15 @@ class AuthController extends CController
 
             $jws->sign($privateKey);
 
-            setcookie('authorization', $jws->getTokenString());
-
-            $msg = 'OK';
+            $msg = $jws->getTokenString();
+            $status = 200;
         }
 
         return new JsonResponse(
             array(
                 'msg' => $msg
-            )
+            ),
+            $status
         );
     }
 
@@ -102,9 +103,6 @@ class AuthController extends CController
      */
     public function logoutAction()
     {
-        unset($_COOKIE['authorization']);
-        setcookie('authorization', '', time() - 3600);
-
         return new JsonResponse(
             array(
                 'msg' => 'OK',

@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Util\FS;
 use Namshi\JOSE\SimpleJWS;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -55,9 +56,11 @@ class CController extends Controller
      */
     protected function getUser()
     {
+        $request = Request::createFromGlobals();
+
         if (is_null($this->user)) {
-            if (isset($_COOKIE['authorization'])) {
-                $jws = SimpleJWS::load($_COOKIE['authorization']);
+            if ($request->headers->get('authorization')) {
+                $jws = SimpleJWS::load($request->headers->get('authorization'));
                 $key = openssl_pkey_get_public('file://' . $this->get('kernel')->getRootDir() . '/var/jwt/public.pem');
 
                 if ($jws->isValid($key, 'RS256')) {
