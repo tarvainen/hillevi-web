@@ -76,6 +76,7 @@ class AuthController extends CController
                 'uid' => $user->getId(),
                 'firstname' => $user->getFirstname(),
                 'lastname' => $user->getLastname(),
+                'email' => $user->getEmail(),
                 'username' => $user->getUsername()
             ));
 
