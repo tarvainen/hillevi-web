@@ -109,6 +109,7 @@ class AuthController extends CController
      */
     public function logoutAction()
     {
+        // TODO: remove the webtoken from the user from the db so the session wont go on!
         return new JsonResponse(
             array(
                 'msg' => 'OK',
