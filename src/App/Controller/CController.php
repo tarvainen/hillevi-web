@@ -56,20 +56,32 @@ class CController extends Controller
      */
     protected function getUser()
     {
-        $request = Request::createFromGlobals();
-
-        if (is_null($this->user)) {
-            if ($request->headers->get('authorization')) {
-                $jws = SimpleJWS::load($request->headers->get('authorization'));
-                $key = openssl_pkey_get_public('file://' . $this->get('kernel')->getRootDir() . '/var/jwt/public.pem');
-
-                if ($jws->isValid($key, 'RS256')) {
-                    $this->user = $jws->getPayload();
-                }
-            }
+        if (is_null($this->user) && $jws = $this->getJWS()) {
+            $this->user = $jws->getPayload();
         }
 
         return $this->user;
+    }
+
+    /**
+     * Returns the JWS object.
+     *
+     * @return \Namshi\JOSE\JWS|null
+     */
+    protected function getJWS()
+    {
+        $request = Request::createFromGlobals();
+
+        if ($request->headers->get('authorization')) {
+            $jws = SimpleJWS::load($request->headers->get('authorization'));
+            $key = openssl_pkey_get_public('file://' . $this->get('kernel')->getRootDir() . '/var/jwt/public.pem');
+
+            if ($jws->isValid($key, 'RS256')) {
+                return $jws;
+            }
+        }
+
+        return null;
     }
 
     /**
