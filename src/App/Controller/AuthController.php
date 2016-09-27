@@ -22,13 +22,19 @@ class AuthController extends CController
      * Returns currently signed user's data.
      *
      * @Route("api/auth/me")
-     * @Method("GET")
+     * @Method("POST")
      *
      * @return JsonResponse
      */
     public function meAction()
     {
-        return new JsonResponse($this->getUser());
+        $user = $this->getUser();
+
+        if (!is_null($user)) {
+            return new JsonResponse($user);
+        }
+
+        return new JsonResponse(NULL, 401);
     }
 
     /**
