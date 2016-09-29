@@ -31,6 +31,13 @@ class ApiReader
     /**
      * @var string
      *
+     * @ORM\Column(name="table", type="string", length=255, unique=true)
+     */
+    private $table;
+
+    /**
+     * @var string
+     *
      * @ORM\Column(name="type", type="string", length=255)
      */
     private $type;
@@ -89,6 +96,30 @@ class ApiReader
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * Set table
+     *
+     * @param string $table
+     *
+     * @return ApiReader
+     */
+    public function setTable($table)
+    {
+        $this->table = $table;
+
+        return $this;
+    }
+
+    /**
+     * Get table
+     *
+     * @return string
+     */
+    public function getTable()
+    {
+        return $this->table;
     }
 
     /**
