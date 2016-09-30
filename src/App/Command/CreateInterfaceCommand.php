@@ -2,9 +2,9 @@
 
 namespace App\Command;
 
-use App\Util\Sql;
+use App\Entity\ApiReader;
 use Doctrine\Bundle\DoctrineBundle\Registry;
-use Doctrine\DBAL\Connection;
+use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -30,7 +30,9 @@ class CreateInterfaceCommand extends ContainerAwareCommand
         $this
             ->setName('app:interface:create')
             ->setDescription('Create the interface.')
-            ->addArgument('table', InputArgument::REQUIRED, 'Table name')
+            ->addArgument('name', InputArgument::REQUIRED, 'Api name')
+            ->addArgument('type', InputArgument::REQUIRED, 'API type like json or xml')
+            ->addArgument('url', InputArgument::REQUIRED, 'API url')
             ->addArgument('columns', InputArgument::IS_ARRAY, 'Gimme the schema!');
     }
 
@@ -44,43 +46,33 @@ class CreateInterfaceCommand extends ContainerAwareCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $tableName = $input->getArgument('table');
-
+        $name = $input->getArgument('name');
         $columns = $input->getArgument('columns');
 
         if (count($columns) <= 0) {
-            $output->write('Define at least one column.');
+            $output->writeln('Define at least one column!');
+            die();
         }
 
         $columns[] = 'id:auto';
 
-        $columnClauses = array();
-        
-        foreach ($columns as $column) {
-            list($title, $type) = explode(':', $column);
+        $api = new ApiReader();
 
-            $columnClauses[] = Sql::create($title, $type);
-        }
-
-        $sql = sprintf(
-            '
-              CREATE TABLE IF NOT EXISTS %1$s (
-                %2$s
-              );
-            ',
-            /** 1 */ $tableName,
-            /** 2 */ implode(',', array_filter($columnClauses))
-        );
+        $api->setName($name);
+        $api->setTable(strtolower(preg_replace('/((?![A-Za-z]).)/', '', $name)));
+        $api->setType($input->getArgument('type'));
+        $api->setUrl($input->getArgument('url'));
+        $api->setColumns(array());
+        $api->setLastUpdate(new \DateTime());
 
         $doctrine = $this->getContainer()->get('doctrine');
 
         /**
-         * @var Connection $conn
+         * @var EntityManager $em
          */
-        $conn = $doctrine
-            ->getManager()
-            ->getConnection();
-        
-        $conn->exec($sql);
+        $em = $doctrine->getManager();
+
+        $em->persist($api);
+        $em->flush();
     }
 }
