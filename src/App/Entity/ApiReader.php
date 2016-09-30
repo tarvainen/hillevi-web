@@ -31,7 +31,7 @@ class ApiReader
     /**
      * @var string
      *
-     * @ORM\Column(name="table", type="string", length=255, unique=true)
+     * @ORM\Column(name="tableName", type="string", length=255, unique=true)
      */
     private $table;
 
