@@ -30,7 +30,7 @@ class UserFixture extends AbstractFixture implements OrderedFixtureInterface
     {
         $admin = new User();
         $admin->setUsername('admin');
-        $admin->setPassword(Password::hash('admin'));
+        $admin->setPassword('admin');
         $admin->setFirstname('Administrator');
         $admin->setLastname('Admin');
         $admin->setSettings(new Settings());

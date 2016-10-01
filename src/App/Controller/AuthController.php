@@ -18,6 +18,8 @@ use App\Annotation\Permission;
  *
  * @package App\Controller
  *
+ * @Route("api/auth/")
+ *
  * @author  Atte Tarvainen <atte.tarvainen@pp1.inet.fi>
  */
 class AuthController extends CController
@@ -27,7 +29,7 @@ class AuthController extends CController
      *
      * @Permission
      *
-     * @Route("api/auth/me")
+     * @Route("me")
      * @Method("POST")
      *
      * @return JsonResponse
@@ -44,9 +46,32 @@ class AuthController extends CController
     }
 
     /**
+     * Updates the user's settings.
+     *
+     * @Permission
+     *
+     * @Route("settings/save")
+     * @Method("POST")
+     *
+     * @return JsonResponse
+     */
+    public function updateAction(Request $request)
+    {
+        $user = $this->getUserEntity();
+
+        $user->fromArray($request->request->all());
+
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($user);
+        $em->flush();
+
+        return new JsonResponse('OK');
+    }
+
+    /**
      * Route to log the user in. Adds the JW-token to the cookies.
      *
-     * @Route("api/auth/login")
+     * @Route("login")
      * @Method("POST")
      *
      * @param  Request $request
@@ -106,7 +131,7 @@ class AuthController extends CController
      *
      * @Permission
      *
-     * @Route("api/auth/logout")
+     * @Route("logout")
      * @Method("POST")
      *
      * @return JsonResponse

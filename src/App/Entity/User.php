@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Naming\Right;
+use App\Util\Password;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping\OneToMany;
 use Doctrine\ORM\Mapping\ManyToMany;
@@ -211,7 +212,7 @@ class User extends EntityBase
      */
     public function setPassword($password)
     {
-        $this->password = $password;
+        $this->password = Password::hash($password);
 
         return $this;
     }

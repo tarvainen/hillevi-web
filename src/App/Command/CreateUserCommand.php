@@ -58,7 +58,7 @@ class CreateUserCommand extends ContainerAwareCommand
 
         $user
             ->setUsername($input->getArgument('username'))
-            ->setPassword(Password::hash($input->getArgument('password')))
+            ->setPassword($input->getArgument('password'))
         ;
 
         /**
