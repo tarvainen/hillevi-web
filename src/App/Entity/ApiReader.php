@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation\Type;
 
 /**
  * ApiReader
@@ -18,6 +19,7 @@ class ApiReader
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
+     * @Type("integer")
      */
     private $id;
 
@@ -25,6 +27,7 @@ class ApiReader
      * @var string
      *
      * @ORM\Column(name="name", type="string", length=255, unique=true)
+     * @Type("string")
      */
     private $name;
 
@@ -32,6 +35,7 @@ class ApiReader
      * @var string
      *
      * @ORM\Column(name="tableName", type="string", length=255, unique=true)
+     * @Type("string")
      */
     private $table;
 
@@ -39,6 +43,7 @@ class ApiReader
      * @var string
      *
      * @ORM\Column(name="type", type="string", length=255)
+     * @Type("string")
      */
     private $type;
 
@@ -46,6 +51,7 @@ class ApiReader
      * @var string
      *
      * @ORM\Column(name="url", type="string", length=6000)
+     * @Type("string")
      */
     private $url;
 
@@ -53,6 +59,7 @@ class ApiReader
      * @var array
      *
      * @ORM\Column(name="columns", type="array")
+     * @Type("array")
      */
     private $columns;
 
@@ -60,6 +67,7 @@ class ApiReader
      * @var \DateTime
      *
      * @ORM\Column(name="lastUpdate", type="datetime")
+     * @Type("DateTime")
      */
     private $lastUpdate;
 
