@@ -3,12 +3,14 @@
 namespace App\Controller;
 
 use App\Entity\ApiReader;
+use App\Exception\NotFoundException;
 use JMS\Serializer\SerializerBuilder;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 /**
  * Controller to handle interfaces.
@@ -83,6 +85,8 @@ class InterfaceController extends CController
      * @Route("api/interface/delete/{id}")
      * @param int $id
      *
+     * @throws NotFoundException
+     *
      * @return JsonResponse
      */
     public function removeInterfaceAction($id)
@@ -92,7 +96,7 @@ class InterfaceController extends CController
         $api = $em->find('App:ApiReader', $id);
 
         if (!$api) {
-            throw $this->createNotFoundException('Target API not found!');
+            throw new NotFoundException('interface');
         }
 
         $em->remove($api);
