@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Util\FS;
+use JMS\Serializer\SerializerBuilder;
 use Namshi\JOSE\SimpleJWS;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -33,6 +34,21 @@ class CController extends Controller
      * @var null
      */
     protected $user = null;
+
+    /**
+     * The serializer.
+     *
+     * @var \JMS\Serializer\Serializer|null
+     */
+    protected $serializer = null;
+
+    /**
+     * CController constructor.
+     */
+    public function __construct()
+    {
+        $this->serializer = SerializerBuilder::create()->build();
+    }
 
     /**
      * Function to write debug in to the dev.log file.

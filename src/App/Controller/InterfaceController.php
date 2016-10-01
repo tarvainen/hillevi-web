@@ -51,13 +51,12 @@ class InterfaceController extends CController
      */
     public function addInterfaceAction(Request $request)
     {
-        $serializer = SerializerBuilder::create()->build();
         $this->log($this->getUserEntity()->getId());
 
         /**
          * @var ApiReader $api
          */
-        $api = $serializer->deserialize(
+        $api = $this->serializer->deserialize(
             json_encode($request->request->all()),
             'App\Entity\ApiReader',
             'json'
@@ -76,5 +75,29 @@ class InterfaceController extends CController
         }
 
         return new JsonResponse('ERR');
+    }
+
+    /**
+     * Route to delete an interface.
+     *
+     * @Route("api/interface/delete/{id}")
+     * @param int $id
+     *
+     * @return JsonResponse
+     */
+    public function removeInterfaceAction($id)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $api = $em->find('App:ApiReader', $id);
+
+        if (!$api) {
+            throw $this->createNotFoundException('Target API not found!');
+        }
+
+        $em->remove($api);
+        $em->flush();
+
+        return new JsonResponse('OK');
     }
 }
