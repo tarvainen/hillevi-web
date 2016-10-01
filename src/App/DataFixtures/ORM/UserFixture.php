@@ -4,8 +4,10 @@ namespace App\DataFixtures\ORM;
 
 use App\Entity\Settings;
 use App\Entity\User;
+use App\Naming\Right;
 use App\Util\Password;
-use Doctrine\Common\DataFixtures\FixtureInterface;
+use Doctrine\Common\DataFixtures\AbstractFixture;
+use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
 /**
@@ -15,7 +17,7 @@ use Doctrine\Common\Persistence\ObjectManager;
  *
  * @author Atte Tarvainen <atte.tarvainen@pp1.inet.fi>
  */
-class UserFixture implements FixtureInterface
+class UserFixture extends AbstractFixture implements OrderedFixtureInterface
 {
     /**
      * Loads the admin user in to the database by default.
@@ -38,8 +40,26 @@ class UserFixture implements FixtureInterface
 
         $admin->setSettings($settings);
 
+        $rights = $manager->getRepository('App:Permission')->findOneBy(
+            [
+                'name' => Right::ADMIN
+            ]
+        );
+
+        $admin->getRights()->add($rights);
+
         $manager->persist($admin);
 
         $manager->flush();
+    }
+
+    /**
+     * Returns the order number for the fixture execution.
+     *
+     * @return int
+     */
+    public function getOrder()
+    {
+        return 2;
     }
 }

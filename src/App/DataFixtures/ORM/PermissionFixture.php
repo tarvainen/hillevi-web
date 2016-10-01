@@ -4,7 +4,8 @@ namespace App\DataFixtures\ORM;
 
 use App\Entity\Permission;
 use App\Naming\Right;
-use Doctrine\Common\DataFixtures\FixtureInterface;
+use Doctrine\Common\DataFixtures\AbstractFixture;
+use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
 /**
@@ -14,7 +15,7 @@ use Doctrine\Common\Persistence\ObjectManager;
  *
  * @author Atte Tarvainen <atte.tarvainen@pp1.inet.fi>
  */
-class PermissionFixture implements FixtureInterface
+class PermissionFixture extends AbstractFixture implements OrderedFixtureInterface
 {
     /**
      * Loads permissions data in to the database.
@@ -38,5 +39,15 @@ class PermissionFixture implements FixtureInterface
         }
 
         $manager->flush();
+    }
+
+    /**
+     * Returns the execution order for the fixture saving.
+     *
+     * @return int
+     */
+    public function getOrder()
+    {
+        return 1;
     }
 }
