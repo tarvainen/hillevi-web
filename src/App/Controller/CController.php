@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\User;
 use App\Util\FS;
 use Namshi\JOSE\SimpleJWS;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -18,6 +19,13 @@ use Symfony\Component\HttpFoundation\Response;
 class CController extends Controller
 {
     const TEMPLATE_DIR = '/app/Resources/templates/';
+
+    /**
+     * The user entity.
+     *
+     * @var null|User
+     */
+    private $userEntity = null;
 
     /**
      * The container for the current user.
@@ -63,6 +71,21 @@ class CController extends Controller
         }
 
         return $this->user;
+    }
+
+    /**
+     * Returns the user entity from the database.
+     *
+     * @return User|null|object
+     */
+    protected function getUserEntity()
+    {
+        if (is_null($this->userEntity)) {
+            $em = $this->getDoctrine()->getManager();
+            $this->userEntity = $em->getRepository('App:User')->find($this->getUser()['uid']);
+        }
+
+        return $this->userEntity;
     }
 
     /**

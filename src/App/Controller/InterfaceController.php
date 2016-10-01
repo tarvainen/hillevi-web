@@ -25,7 +25,7 @@ class InterfaceController extends CController
      * @Route("api/interface/all")
      * @Method("POST")
      *
-     * @return JsonResponse
+     * @return Response
      */
     public function getAllInterfaceAction()
     {
@@ -52,10 +52,19 @@ class InterfaceController extends CController
     public function addInterfaceAction(Request $request)
     {
         $serializer = SerializerBuilder::create()->build();
+        $this->log($this->getUserEntity()->getId());
 
+        /**
+         * @var ApiReader $api
+         */
         $api = $serializer->deserialize(
-            json_encode($request->request->all()), 'App\Entity\ApiReader', 'json'
+            json_encode($request->request->all()),
+            'App\Entity\ApiReader',
+            'json'
         );
+
+        $api->setOwner($this->getUserEntity());
+        $api->setLastUpdate(new \DateTime());
 
         $em = $this->getDoctrine()->getManager();
 

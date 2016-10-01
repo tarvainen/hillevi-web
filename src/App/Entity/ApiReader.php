@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\ManyToOne;
 use JMS\Serializer\Annotation\Type;
 
 /**
@@ -71,6 +72,12 @@ class ApiReader
      */
     private $lastUpdate;
 
+    /**
+     * @var User
+     *
+     * @ManyToOne(targetEntity="User")
+     */
+    private $owner;
 
     /**
      * Get id
@@ -224,6 +231,30 @@ class ApiReader
     public function getLastUpdate()
     {
         return $this->lastUpdate;
+    }
+
+    /**
+     * Set owner
+     *
+     * @param User $owner
+     *
+     * @return ApiReader
+     */
+    public function setOwner($owner)
+    {
+        $this->owner = $owner;
+
+        return $this;
+    }
+
+    /**
+     * Get owner
+     *
+     * @return User
+     */
+    public function getOwner()
+    {
+        return $this->owner;
     }
 }
 
