@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Exception\UnauthorizedException;
 use App\Util\FS;
 use JMS\Serializer\SerializerBuilder;
 use Namshi\JOSE\SimpleJWS;
@@ -118,7 +119,7 @@ class CController extends Controller
             try {
                 $jws = SimpleJWS::load($request->headers->get('authorization'));
             } catch (\InvalidArgumentException $e) {
-                return null;
+                throw new UnauthorizedException();
             }
 
             $key = openssl_pkey_get_public('file://' . $this->get('kernel')->getRootDir() . '/var/jwt/public.pem');
@@ -129,7 +130,7 @@ class CController extends Controller
             }
         }
 
-        return null;
+        throw new UnauthorizedException();
     }
 
     /**

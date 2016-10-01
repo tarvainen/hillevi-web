@@ -2,7 +2,11 @@
 
 namespace App\Annotation;
 
+use App\Entity\User;
 use App\Exception\UnauthorizedException;
+use Doctrine\ORM\EntityManager;
+use Namshi\JOSE\SimpleJWS;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Permission annotation for checking user permissions before granting access on controllers etc.
@@ -23,20 +27,29 @@ class Permission extends ContainerAwareAnnotation
     public $perm;
 
     /**
+     * @var User|null;
+     */
+    private $user;
+
+    /**
      * Does the validation for the annotation.
      *
      * @return void
      */
     public function validate()
     {
+        if (!$this->validateJWT()) {
+            throw new UnauthorizedException();
+        }
+
         $permissions = explode(',', $this->parseSimpleAnnotation($this->perm));
 
         // Check if admin, then there has to be no control over any routes
-        if ($this->controller->getUserEntity()->isAdmin()) {
+        if ($this->user->isAdmin()) {
             return;
         }
 
-        $rightEntities = $this->controller->getUserEntity()->getRights();
+        $rightEntities = $this->user->getRights();
 
         /**
          * Map the entity names to an array.
@@ -54,5 +67,39 @@ class Permission extends ContainerAwareAnnotation
                 throw new UnauthorizedException();
             }
         }
+    }
+
+    /**
+     * Validates the JWT on every route we have the @Permission set.
+     * @return bool
+     */
+    private function validateJWT()
+    {
+        $request = Request::createFromGlobals();
+
+        $jwt = $request->headers->get('authorization');
+
+        try {
+            $jws = SimpleJWS::load($jwt);
+        } catch (\InvalidArgumentException $e) {
+            return false;
+        }
+
+        $doctrine = $this->container->get('doctrine');
+
+        /**
+         * @var EntityManager $em
+         */
+        $em = $doctrine->getManager();
+
+        $user = $em->find('App:User', $jws->getPayload()['uid']);
+
+        if (!$user) {
+            return false;
+        }
+
+        $this->user = $user;
+
+        return $this->user->getToken() === $jwt;
     }
 }

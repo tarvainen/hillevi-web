@@ -27,6 +27,12 @@ abstract class AbstractAnnotation
      */
     protected function parseSimpleAnnotation($annotation)
     {
-        return explode('=', $annotation)[1];
+        $parts = explode('=', $annotation);
+
+        if (count($parts) > 1) {
+            return $parts[1];
+        }
+
+        return $parts[0];
     }
 }

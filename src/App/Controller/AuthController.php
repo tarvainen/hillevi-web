@@ -25,7 +25,7 @@ class AuthController extends CController
     /**
      * Returns currently signed user's data.
      *
-     * @Permission("perm=common")
+     * @Permission
      *
      * @Route("api/auth/me")
      * @Method("POST")
@@ -103,6 +103,8 @@ class AuthController extends CController
 
     /**
      * Route to log the user out. Clears the cookies.
+     *
+     * @Permission
      *
      * @Route("api/auth/logout")
      * @Method("POST")
