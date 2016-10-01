@@ -34,7 +34,7 @@ class User extends EntityBase
      *
      * @ORM\Column(name="token", type="string", length=6000)
      */
-    private $token;
+    private $token = '';
 
     /**
      * @var string
