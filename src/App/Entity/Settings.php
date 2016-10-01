@@ -11,7 +11,7 @@ use Doctrine\ORM\Mapping\OneToOne;
  * @ORM\Table(name="settings")
  * @ORM\Entity(repositoryClass="App\Repository\SettingsRepository")
  */
-class Settings
+class Settings extends EntityBase
 {
     /**
      * @var int

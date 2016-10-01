@@ -17,4 +17,8 @@ abstract class Right
     const ADMIN = 'admin';
     const DASHBOARD = 'dashboard';
     const USER_SETTINGS = 'user_settings';
+
+    const INTERFACE = 'interface';
+    const INTERFACE_CREATE = 'interface:create';
+    const INTERFACE_DELETE = 'interface:delete';
 }

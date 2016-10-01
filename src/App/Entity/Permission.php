@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="permission")
  * @ORM\Entity(repositoryClass="App\Repository\PermissionRepository")
  */
-class Permission
+class Permission extends EntityBase
 {
     /**
      * @var int

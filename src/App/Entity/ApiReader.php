@@ -12,7 +12,7 @@ use JMS\Serializer\Annotation\Type;
  * @ORM\Table(name="api_reader")
  * @ORM\Entity(repositoryClass="App\Repository\ApiReaderRepository")
  */
-class ApiReader
+class ApiReader extends EntityBase
 {
     /**
      * @var int
