@@ -55,6 +55,8 @@ class AuthController extends CController
         $username = $request->get('username', '');
         $password = $request->get('password', '');
 
+        $em = $this->getDoctrine()->getManager();
+
         /**
          * @var User $user
          */
@@ -80,18 +82,17 @@ class AuthController extends CController
                 'username' => $user->getUsername()
             ));
 
-            $key = trim(file_get_contents($this->rootDir() . '/var/jwt/phrase.key'));
-
-            $privateKey = openssl_pkey_get_private(
-                'file://' . $this->rootDir() . '/var/jwt/private.pem',
-                $key
-            );
+            $privateKey = $this->getPrivateKey();
 
             $jws->sign($privateKey);
 
-            $msg = $jws->getTokenString();
+            $token = $jws->getTokenString();
 
-            return new Response($msg);
+            $user->setToken($token);
+            $em->persist($user);
+            $em->flush();
+
+            return new Response($token);
         }
 
         throw new ActionFailedException('login');
@@ -107,6 +108,19 @@ class AuthController extends CController
      */
     public function logoutAction()
     {
+        $user = $this->getUserEntity();
+
+        if (!$user) {
+            throw new UnauthorizedException();
+        }
+
+        $user->setToken(null);
+
+        $em = $this->getDoctrine()->getManager();
+
+        $em->persist($user);
+        $em->flush();
+
         return new JsonResponse('OK');
     }
 }

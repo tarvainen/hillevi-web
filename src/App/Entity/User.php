@@ -30,6 +30,13 @@ class User
     /**
      * @var string
      *
+     * @ORM\Column(name="token", type="string", length=6000)
+     */
+    private $token;
+
+    /**
+     * @var string
+     *
      * @ORM\Column(name="firstname", type="string", length=255)
      */
     private $firstname = '';
@@ -96,6 +103,30 @@ class User
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * Set token
+     *
+     * @param   string  $token
+     *
+     * @return  User
+     */
+    public function setToken($token)
+    {
+        $this->token = $token;
+
+        return $this;
+    }
+
+    /**
+     * Get token
+     *
+     * @return string
+     */
+    public function getToken()
+    {
+        return $this->token;
     }
 
     /**

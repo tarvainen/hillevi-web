@@ -124,11 +124,27 @@ class CController extends Controller
             $key = openssl_pkey_get_public('file://' . $this->get('kernel')->getRootDir() . '/var/jwt/public.pem');
 
             if ($jws->isValid($key, 'RS256')) {
+                $jws->sign($this->getPrivateKey());
                 return $jws;
             }
         }
 
         return null;
+    }
+
+    /**
+     * Returns the private key for the JWT.
+     *
+     * @return bool|resource
+     */
+    protected function getPrivateKey()
+    {
+        $key = trim(file_get_contents($this->rootDir() . '/var/jwt/phrase.key'));
+
+        return openssl_pkey_get_private(
+            'file://' . $this->rootDir() . '/var/jwt/private.pem',
+            $key
+        );
     }
 
     /**
