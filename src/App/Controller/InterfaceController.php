@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\ApiReader;
+use App\Exception\ActionFailedException;
 use App\Exception\NotFoundException;
 use JMS\Serializer\SerializerBuilder;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -27,6 +28,8 @@ class InterfaceController extends CController
      * @Route("api/interface/all")
      * @Method("POST")
      *
+     * @throws NotFoundException
+     *
      * @return Response
      */
     public function getAllInterfaceAction()
@@ -35,6 +38,10 @@ class InterfaceController extends CController
             ->getDoctrine()
             ->getRepository('App:ApiReader')
             ->findAll();
+
+        if (!$interfaces) {
+            throw new NotFoundException('interface');
+        }
 
         $serializer = SerializerBuilder::create()->build();
 
@@ -72,11 +79,11 @@ class InterfaceController extends CController
         $em->persist($api);
         $em->flush();
 
-        if ($em->contains($api)) {
-            return new JsonResponse('OK');
+        if (!$em->contains($api)) {
+            throw new ActionFailedException('save');
         }
 
-        return new JsonResponse('ERR');
+        return new JsonResponse('OK');
     }
 
     /**

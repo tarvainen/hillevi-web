@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Exception\ActionFailedException;
+use App\Exception\NotFoundException;
 use Cron\CronBundle\Entity\CronJob;
 use JMS\Serializer\SerializerBuilder;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -24,7 +26,9 @@ class CronController extends CController
      * @Route("api/cron/all")
      * @Method("POST")
      *
-     * @return JsonResponse
+     * @throws NotFoundException
+     *
+     * @return Response
      */
     public function getAllCronAction()
     {
@@ -32,6 +36,10 @@ class CronController extends CController
             ->getDoctrine()
             ->getRepository('Cron\CronBundle\Entity\CronJob')
             ->findAll();
+
+        if (!$cron) {
+            throw new NotFoundException('cron');
+        }
 
         $serializer = SerializerBuilder::create()->build();
 
@@ -45,6 +53,8 @@ class CronController extends CController
      *
      * @Route("api/cron/add")
      * @Method("POST")
+     *
+     * @throws ActionFailedException
      *
      * @return JsonResponse
      */
@@ -62,6 +72,10 @@ class CronController extends CController
 
         $em->persist($cron);
         $em->flush();
+
+        if (!$em->contains($cron)) {
+            throw new ActionFailedException('save');
+        }
 
         return new JsonResponse('OK');
     }

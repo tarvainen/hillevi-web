@@ -2,12 +2,15 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Exception\ActionFailedException;
+use App\Exception\UnauthorizedException;
 use App\Util\Password;
 use Namshi\JOSE\SimpleJWS;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Controller for the authentication routes.
@@ -34,7 +37,7 @@ class AuthController extends CController
             return new JsonResponse($user);
         }
 
-        return new JsonResponse(null, 401);
+        throw new UnauthorizedException();
     }
 
     /**
@@ -43,17 +46,14 @@ class AuthController extends CController
      * @Route("api/auth/login")
      * @Method("POST")
      *
-     * @param   Request $request
+     * @param  Request $request
      *
-     * @return JsonResponse
+     * @return Response
      */
     public function loginAction(Request $request)
     {
         $username = $request->get('username', '');
         $password = $request->get('password', '');
-
-        $msg = 'ERR'; // TODO: translate (maybe just change to be more exiting)
-        $status = 401;
 
         /**
          * @var User $user
@@ -90,15 +90,11 @@ class AuthController extends CController
             $jws->sign($privateKey);
 
             $msg = $jws->getTokenString();
-            $status = 200;
+
+            return new Response($msg);
         }
 
-        return new JsonResponse(
-            array(
-                'msg' => $msg
-            ),
-            $status
-        );
+        throw new ActionFailedException('login');
     }
 
     /**
@@ -111,11 +107,6 @@ class AuthController extends CController
      */
     public function logoutAction()
     {
-        // TODO: remove the webtoken from the user from the db so the session wont go on!
-        return new JsonResponse(
-            array(
-                'msg' => 'OK',
-            )
-        );
+        return new JsonResponse('OK');
     }
 }

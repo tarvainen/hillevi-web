@@ -7,6 +7,7 @@ use App\Util\FS;
 use JMS\Serializer\SerializerBuilder;
 use Namshi\JOSE\SimpleJWS;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -114,7 +115,12 @@ class CController extends Controller
         $request = Request::createFromGlobals();
 
         if (!empty($request->headers->get('authorization'))) {
-            $jws = SimpleJWS::load($request->headers->get('authorization'));
+            try {
+                $jws = SimpleJWS::load($request->headers->get('authorization'));
+            } catch (\InvalidArgumentException $e) {
+                return null;
+            }
+
             $key = openssl_pkey_get_public('file://' . $this->get('kernel')->getRootDir() . '/var/jwt/public.pem');
 
             if ($jws->isValid($key, 'RS256')) {
@@ -123,33 +129,6 @@ class CController extends Controller
         }
 
         return null;
-    }
-
-    /**
-     * Does a simple page render without any template engines.
-     *
-     * @param string $module
-     * @param string $file
-     * @param bool   $out
-     *
-     * @return Response|string
-     */
-    protected function renderHTML($module, $file, $out = true)
-    {
-        $templateFile = sprintf(
-            '%1$s%2$s/%3$s.html',
-            /** 1 */ self::TEMPLATE_DIR,
-            /** 2 */ $module,
-            /** 3 */ $file
-        );
-
-        $html = $this->readFile($templateFile);
-
-        if ($out === true) {
-            return new Response($html);
-        } else {
-            return $html;
-        }
     }
 
     /**
