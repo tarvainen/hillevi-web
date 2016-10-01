@@ -58,20 +58,25 @@ class CController extends Controller
      *
      * @return void
      */
-    protected function log($msg = '')
+    public function log($msg = '')
     {
         $logger = $this->get('logger');
         $logger->debug($msg);
     }
 
     /**
-     * Returns the root directory.
+     * Returns the user entity from the database.
      *
-     * @return mixed
+     * @return User|null|object
      */
-    protected function rootDir()
+    public function getUserEntity()
     {
-        return $this->get('kernel')->getRootDir();
+        if (is_null($this->userEntity)) {
+            $em = $this->getDoctrine()->getManager();
+            $this->userEntity = $em->getRepository('App:User')->find($this->getUser()['uid']);
+        }
+
+        return $this->userEntity;
     }
 
     /**
@@ -79,7 +84,7 @@ class CController extends Controller
      *
      * @return array|null
      */
-    protected function getUser()
+    public function getUser()
     {
         $jws = $this->getJWS();
 
@@ -91,18 +96,13 @@ class CController extends Controller
     }
 
     /**
-     * Returns the user entity from the database.
+     * Returns the root directory.
      *
-     * @return User|null|object
+     * @return mixed
      */
-    protected function getUserEntity()
+    protected function rootDir()
     {
-        if (is_null($this->userEntity)) {
-            $em = $this->getDoctrine()->getManager();
-            $this->userEntity = $em->getRepository('App:User')->find($this->getUser()['uid']);
-        }
-
-        return $this->userEntity;
+        return $this->get('kernel')->getRootDir();
     }
 
     /**

@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Naming\Right;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping\OneToMany;
 use Doctrine\ORM\Mapping\ManyToMany;
@@ -319,5 +320,20 @@ class User
     public function getSettings()
     {
         return $this->settings;
+    }
+
+    /**
+     * Checks if the user is admin.
+     *
+     * @return bool
+     */
+    public function isAdmin()
+    {
+        return $this->rights->exists(function ($index, $right) {
+            /**
+             * @var Permission $right
+             */
+            return $right->getName() === Right::ADMIN;
+        });
     }
 }

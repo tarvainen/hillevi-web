@@ -7,3 +7,7 @@ services:
 #    service_name:
 #        class: AppBundle\Directory\ClassName
 #        arguments: ["@another_service_name", "plain_value", "%parameter_name%"]
+    annotation_driver:
+        class: App\Annotation\AnnotationDriver
+        tags: [{name: kernel.event_listener, event: kernel.controller, method: onKernelController}]
+        arguments: ['@annotation_reader', '@service_container']

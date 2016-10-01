@@ -11,6 +11,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use App\Annotation\Permission;
 
 /**
  * Controller for the authentication routes.
@@ -23,6 +24,8 @@ class AuthController extends CController
 {
     /**
      * Returns currently signed user's data.
+     *
+     * @Permission("perm=common")
      *
      * @Route("api/auth/me")
      * @Method("POST")
