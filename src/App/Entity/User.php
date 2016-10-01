@@ -76,7 +76,7 @@ class User
     private $rights;
 
     /**
-     * @OneToOne(targetEntity="Settings", mappedBy="user_id")
+     * @OneToOne(targetEntity="Settings")
      *
      * @var Settings
      */

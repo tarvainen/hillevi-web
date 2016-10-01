@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\OneToOne;
 
 /**
  * Settings
@@ -20,6 +21,13 @@ class Settings
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
+
+    /**
+     * @var User
+     *
+     * @OneToOne(targetEntity="User")
+     */
+    private $user;
 
     /**
      * @var bool
@@ -61,5 +69,29 @@ class Settings
     public function getNotifications()
     {
         return $this->notifications;
+    }
+
+    /**
+     * Set user
+     *
+     * @param   User $user
+     *
+     * @return  Settings
+     */
+    public function setUser($user)
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * Get user
+     *
+     * @return User
+     */
+    public function getUser()
+    {
+        return $this->user;
     }
 }
