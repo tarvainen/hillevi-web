@@ -34,7 +34,7 @@ class AuthController extends CController
             return new JsonResponse($user);
         }
 
-        return new JsonResponse(NULL, 401);
+        return new JsonResponse(null, 401);
     }
 
     /**
@@ -83,7 +83,8 @@ class AuthController extends CController
             $key = trim(file_get_contents($this->rootDir() . '/var/jwt/phrase.key'));
 
             $privateKey = openssl_pkey_get_private(
-                'file://' . $this->rootDir() . '/var/jwt/private.pem', $key
+                'file://' . $this->rootDir() . '/var/jwt/private.pem',
+                $key
             );
 
             $jws->sign($privateKey);

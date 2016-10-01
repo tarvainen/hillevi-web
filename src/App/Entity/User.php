@@ -2,6 +2,10 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Mapping\OneToMany;
+use Doctrine\ORM\Mapping\JoinTable;
+use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -61,6 +65,14 @@ class User
      * @ORM\Column(name="phone", type="string", length=255)
      */
     private $phone = '';
+
+    /**
+     * @OneToMany(targetEntity="Permission", mappedBy="id")
+     * @JoinTable(name="user_permission", joinColumns={@JoinColumn(name="user_id", referencedColumnName="id")})
+     *
+     * @var ArrayCollection
+     */
+    private $rights;
 
 
     /**
@@ -216,5 +228,28 @@ class User
     {
         return $this->phone;
     }
-}
 
+    /**
+     * Set rights.
+     *
+     * @param ArrayCollection $rights
+     *
+     * @return User
+     */
+    public function setRights($rights)
+    {
+        $this->rights = $rights;
+
+        return $this;
+    }
+
+    /**
+     * Get rights.
+     *
+     * @return ArrayCollection
+     */
+    public function getRights()
+    {
+        return $this->rights;
+    }
+}
