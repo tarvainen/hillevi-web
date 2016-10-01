@@ -23,18 +23,11 @@ class Settings
     private $id;
 
     /**
-     * @var User
-     *
-     * @OneToOne(targetEntity="User")
-     */
-    private $user;
-
-    /**
      * @var bool
      *
      * @ORM\Column(name="notifications", type="boolean")
      */
-    private $notifications;
+    private $notifications = true;
 
 
     /**
@@ -69,29 +62,5 @@ class Settings
     public function getNotifications()
     {
         return $this->notifications;
-    }
-
-    /**
-     * Set user
-     *
-     * @param   User $user
-     *
-     * @return  Settings
-     */
-    public function setUser($user)
-    {
-        $this->user = $user;
-
-        return $this;
-    }
-
-    /**
-     * Get user
-     *
-     * @return User
-     */
-    public function getUser()
-    {
-        return $this->user;
     }
 }

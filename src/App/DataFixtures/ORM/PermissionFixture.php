@@ -25,6 +25,7 @@ class PermissionFixture implements FixtureInterface
     {
         // Define all loaded right modules here
         $rights = [
+            Right::ADMIN,
             Right::DASHBOARD,
             Right::USER_SETTINGS,
         ];

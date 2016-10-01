@@ -2,6 +2,7 @@
 
 namespace App\DataFixtures\ORM;
 
+use App\Entity\Settings;
 use App\Entity\User;
 use App\Util\Password;
 use Doctrine\Common\DataFixtures\FixtureInterface;
@@ -30,8 +31,15 @@ class UserFixture implements FixtureInterface
         $admin->setPassword(Password::hash('admin'));
         $admin->setFirstname('Administrator');
         $admin->setLastname('Admin');
+        $admin->setSettings(new Settings());
+
+        $settings = new Settings();
+        $manager->persist($settings);
+
+        $admin->setSettings($settings);
 
         $manager->persist($admin);
+
         $manager->flush();
     }
 }

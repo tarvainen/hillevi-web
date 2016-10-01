@@ -14,6 +14,7 @@ abstract class Right
     /**
      * The right module constant values.
      */
+    const ADMIN = 'admin';
     const DASHBOARD = 'dashboard';
     const USER_SETTINGS = 'user_settings';
 }
