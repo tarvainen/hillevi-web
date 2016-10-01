@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping\OneToMany;
 use Doctrine\ORM\Mapping\JoinTable;
 use Doctrine\ORM\Mapping\JoinColumn;
+use Doctrine\ORM\Mapping\OneToOne;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -73,6 +74,13 @@ class User
      * @var ArrayCollection
      */
     private $rights;
+
+    /**
+     * @OneToOne(targetEntity="Settings", mappedBy="user_id")
+     *
+     * @var Settings
+     */
+    private $settings;
 
 
     /**
@@ -251,5 +259,29 @@ class User
     public function getRights()
     {
         return $this->rights;
+    }
+
+    /**
+     * Set settings.
+     *
+     * @param Settings $settings
+     *
+     * @return User
+     */
+    public function setSettings($settings)
+    {
+        $this->settings = $settings;
+
+        return $this;
+    }
+
+    /**
+     * Get settings.
+     *
+     * @return Settings
+     */
+    public function getSettings()
+    {
+        return $this->settings;
     }
 }

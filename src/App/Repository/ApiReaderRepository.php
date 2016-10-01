@@ -10,4 +10,13 @@ namespace App\Repository;
  */
 class ApiReaderRepository extends BaseRepository
 {
+    /**
+     * Checks the user rights for this module.
+     *
+     * @return ApiReaderRepository
+     */
+    public function scopeRights()
+    {
+        return $this;
+    }
 }
