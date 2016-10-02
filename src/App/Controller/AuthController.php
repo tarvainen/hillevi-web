@@ -105,6 +105,61 @@ class AuthController extends CController
     }
 
     /**
+     * Route to just check the user password for password change.
+     *
+     * @param Request $request
+     *
+     * @Permission
+     *
+     * @Route("settings/password/check")
+     * @Method("POST")
+     *
+     * @return JsonResponse
+     */
+    public function passwordCheckAction(Request $request)
+    {
+        $passwordToCheck = $request->get('password');
+
+        if (Password::test($passwordToCheck, $this->getUserEntity()->getPassword())) {
+            return new JsonResponse('OK');
+        }
+
+        throw new ActionFailedException('password_check');
+    }
+
+    /**
+     * Route to change the user's password.
+     *
+     * @Permission
+     *
+     * @Route("settings/password/change")
+     * @Method("POST")
+     *
+     * @return JsonResponse
+     */
+    public function passwordChangeAction()
+    {
+        $values = ['oldPassword', 'newPassword', 'newPasswordAgain'];
+
+        list($oldPassword, $newPassword, $newPasswordAgain) = $this->mapFromRequest($values);
+
+        if (!Password::test($oldPassword, $this->getUserEntity()->getPassword())
+            || $newPassword !== $newPasswordAgain
+        ) {
+            throw new ActionFailedException('password_change');
+        }
+
+        $this->getUserEntity()->setPassword($newPassword);
+
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($this->getUserEntity());
+
+        $em->flush();
+
+        return new JsonResponse('OK');
+    }
+
+    /**
      * Route to log the user in. Adds the JW-token to the cookies.
      *
      * @Route("login")

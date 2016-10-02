@@ -159,4 +159,26 @@ class CController extends Controller
     {
         return FS::readFile($this->rootDir() . '/../' . $filename);
     }
+
+    /**
+     * Maps an array of values from the request. Use like following:
+     *
+     * list($val, $val1) = $this->mapFromRequest('val', 'val1');
+     *
+     * @param   array $values
+     *
+     * @return  array
+     */
+    protected function mapFromRequest(array $values)
+    {
+        $request = Request::createFromGlobals();
+
+        $result = array();
+
+        foreach ($values as $value) {
+            $result[] = $request->get($value);
+        }
+
+        return $result;
+    }
 }
