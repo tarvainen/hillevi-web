@@ -5,6 +5,7 @@ use App\Entity\User;
 use App\Exception\ActionFailedException;
 use App\Exception\UnauthorizedException;
 use App\Util\Password;
+use Doctrine\ORM\EntityManager;
 use Namshi\JOSE\SimpleJWS;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -43,6 +44,34 @@ class AuthController extends CController
         }
 
         throw new UnauthorizedException();
+    }
+
+    /**
+     * Returns the user's settings.
+     *
+     * @Permission
+     *
+     * @Route("settings")
+     * @Method("POST")
+     *
+     * @return JsonResponse
+     */
+    public function settingsAction()
+    {
+        /**
+         * @var EntityManager $em
+         */
+        $em = $this->getDoctrine()->getManager();
+
+        $query = $em->createQueryBuilder()
+            ->from('App:User', 'u')
+            ->select(array('partial u.{id, firstname, lastname, username, email}'))
+            ->where('u.id = ' . $this->getUser()['uid'])
+            ->setMaxResults(1)
+            ->getQuery();
+
+
+        return new JsonResponse($query->getArrayResult()[0]);
     }
 
     /**
