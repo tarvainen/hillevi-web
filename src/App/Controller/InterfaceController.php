@@ -45,10 +45,6 @@ class InterfaceController extends CController
             ->getRepository('App:ApiReader')
             ->findAll();
 
-        if (!$interfaces) {
-            throw new NotFoundException('interface');
-        }
-
         $serializer = SerializerBuilder::create()->build();
 
         return new Response($serializer->serialize($interfaces, 'json'));
