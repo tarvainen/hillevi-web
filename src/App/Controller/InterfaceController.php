@@ -34,20 +34,21 @@ class InterfaceController extends CController
      * @Route("all")
      * @Method("POST")
      *
-     * @throws NotFoundException
-     *
-     * @return Response
+     * @return JsonResponse
      */
     public function getAllInterfaceAction()
     {
-        $interfaces = $this
+        $query = $this
             ->getDoctrine()
-            ->getRepository('App:ApiReader')
-            ->findAll();
+            ->getEntityManager()
+            ->createQueryBuilder()
+            ->from('App:ApiReader', 'a')
+            ->select('partial a.{id, name, type, url, columns}')
+            ->where('a.owner = :id')
+            ->setParameter(':id', $this->getUser()['uid'])
+            ->getQuery();
 
-        $serializer = SerializerBuilder::create()->build();
-
-        return new Response($serializer->serialize($interfaces, 'json'));
+        return new JsonResponse($query->getArrayResult());
     }
 
     /**
