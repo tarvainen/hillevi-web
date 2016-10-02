@@ -43,7 +43,7 @@ class InterfaceController extends CController
             ->getEntityManager()
             ->createQueryBuilder()
             ->from('App:ApiReader', 'a')
-            ->select('partial a.{id, name, type, url, columns, lastUpdate}')
+            ->select('partial a.{id, name, type, url, columns, lastUpdate, active}')
             ->where('a.owner = :id')
             ->setParameter(':id', $this->getUser()['uid'])
             ->getQuery();

@@ -73,6 +73,14 @@ class ApiReader extends EntityBase
     private $lastUpdate;
 
     /**
+     * @var boolean
+     *
+     * @ORM\Column(name="active", type="boolean")
+     * @Type("boolean")
+     */
+    private $active;
+
+    /**
      * @var User
      *
      * @ManyToOne(targetEntity="User")
@@ -256,5 +264,32 @@ class ApiReader extends EntityBase
     {
         return $this->owner;
     }
-}
 
+    /**
+     * Set activeness.
+     *
+     * @param   boolean $active
+     *
+     * @return  ApiReader
+     */
+    public function setActive($active)
+    {
+        if (is_string($active)) {
+            $this->active = $active === 'active';
+        } else {
+            $this->active = $active;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Get activeness.
+     *
+     * @return boolean
+     */
+    public function getActive()
+    {
+        return $this->active;
+    }
+}
