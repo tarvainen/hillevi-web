@@ -49,8 +49,9 @@ class UserFixture extends AbstractFixture implements OrderedFixtureInterface
         $admin->getRights()->add($rights);
 
         $manager->persist($admin);
-
         $manager->flush();
+
+        $this->setReference('admin-user', $admin);
     }
 
     /**
