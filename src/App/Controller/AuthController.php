@@ -37,13 +37,20 @@ class AuthController extends CController
      */
     public function meAction()
     {
-        $user = $this->getUser();
+        /**
+         * @var EntityManager $em
+         */
+        $em = $this->getDoctrine()->getManager();
 
-        if (!is_null($user)) {
-            return new JsonResponse($user);
-        }
+        $query = $em->createQueryBuilder()
+            ->from('App:User', 'u')
+            ->select(array('partial u.{id, firstname, lastname, username, email}'))
+            ->where('u.id = ' . $this->getUser()['uid'])
+            ->setMaxResults(1)
+            ->getQuery();
 
-        throw new UnauthorizedException();
+
+        return new JsonResponse($query->getArrayResult()[0]);
     }
 
     /**
@@ -94,7 +101,7 @@ class AuthController extends CController
         $em->persist($user);
         $em->flush();
 
-        return new JsonResponse('OK');
+        return $this->meAction();
     }
 
     /**
@@ -133,10 +140,6 @@ class AuthController extends CController
              */
             $jws->setPayload(array(
                 'uid' => $user->getId(),
-                'firstname' => $user->getFirstname(),
-                'lastname' => $user->getLastname(),
-                'email' => $user->getEmail(),
-                'username' => $user->getUsername()
             ));
 
             $privateKey = $this->getPrivateKey();
