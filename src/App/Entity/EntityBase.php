@@ -28,8 +28,7 @@ class EntityBase
     public function fromArray(array $data)
     {
         foreach ($data as $key => $value) {
-            Logger::log(get_class($this));
-            if (property_exists(get_class($this), $key) && method_exists(get_class($this), 'set' . strtoupper($key))) {
+            if (method_exists(get_class($this), 'set' . strtoupper($key))) {
                 $this->{'set' . strtoupper($key)}($value);
             }
         }

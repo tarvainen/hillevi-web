@@ -49,7 +49,11 @@ class Settings extends EntityBase
      */
     public function setNotifications($notifications)
     {
-        $this->notifications = $notifications;
+        if (is_string($notifications)) {
+            $this->notifications = $notifications === 'true' ? true : false;
+        } else {
+            $this->notifications = $notifications;
+        }
 
         return $this;
     }
