@@ -128,7 +128,7 @@ class ApiReader extends EntityBase
      *
      * @return ApiReader
      */
-    public function setTable($table)
+    public function setTableName($table)
     {
         $this->table = $table;
 
@@ -140,7 +140,7 @@ class ApiReader extends EntityBase
      *
      * @return string
      */
-    public function getTable()
+    public function getTableName()
     {
         return $this->table;
     }

@@ -196,7 +196,7 @@ class CController extends Controller
         $result = array();
 
         foreach ($values as $value) {
-            $result[$value] = $request->get($value);
+            $result[trim($value)] = $request->get(trim($value));
         }
 
         return $result;

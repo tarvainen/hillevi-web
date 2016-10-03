@@ -65,16 +65,14 @@ class InterfaceController extends CController
      */
     public function addInterfaceAction(Request $request)
     {
-        $this->log($this->getUserEntity()->getId());
+        $data = $this->mapHashFromRequest(['name', ' type', 'url']);
 
-        /**
-         * @var ApiReader $api
-         */
-        $api = $this->serializer->deserialize(
-            json_encode($request->request->all()),
-            'App\Entity\ApiReader',
-            'json'
-        );
+        $data['tableName'] = preg_replace('/[^A-Za-z_]/', '', strtolower($data['name']));
+        $data['active'] = true;
+        $data['columns'] = [];
+
+        $api = new ApiReader();
+        $api->fromArray($data);
 
         $api->setOwner($this->getUserEntity());
         $api->setLastUpdate(new \DateTime());

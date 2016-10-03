@@ -59,7 +59,7 @@ class CreateInterfaceCommand extends ContainerAwareCommand
         $api = new ApiReader();
 
         $api->setName($name);
-        $api->setTable(strtolower(preg_replace('/((?![A-Za-z]).)/', '', $name)));
+        $api->setTableName(strtolower(preg_replace('/((?![A-Za-z]).)/', '', $name)));
         $api->setType($input->getArgument('type'));
         $api->setUrl($input->getArgument('url'));
         $api->setColumns(array());
