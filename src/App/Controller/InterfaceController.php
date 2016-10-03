@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\ApiReader;
 use App\Exception\ActionFailedException;
 use App\Exception\NotFoundException;
+use App\Naming\FieldType;
 use Doctrine\ORM\EntityManager;
 use JMS\Serializer\SerializerBuilder;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -149,5 +150,24 @@ class InterfaceController extends CController
         $em->flush();
 
         return new JsonResponse('OK');
+    }
+
+    /**
+     * Action to fetch all possible interface types.
+     *
+     * @Route("fields/types")
+     * @Method("POST")
+     *
+     * @return JsonResponse
+     */
+    public function getInterfaceTypesAction()
+    {
+        $types = [
+            FieldType::INTEGER,
+            FieldType::DECIMAL,
+            FieldType::STRING
+        ];
+
+        return new JsonResponse($types);
     }
 }
