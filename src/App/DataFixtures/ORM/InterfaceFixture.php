@@ -3,6 +3,7 @@
 namespace App\DataFixtures\ORM;
 
 use App\Entity\ApiReader;
+use App\Naming\FieldType;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -28,10 +29,16 @@ class InterfaceFixture extends AbstractFixture implements OrderedFixtureInterfac
         $api = new ApiReader();
         $api->setName('DemoApi')
             ->setLastUpdate(new \DateTime())
-            ->setTable('demo_api_table')
+            ->setTableName('demo_api_table')
             ->setType('rest')
+            ->setActive(true)
             ->setUrl('https://myexampleapiswhichdoesntreadllyexists.com/temperature/now')
-            ->setColumns(array())
+            ->setColumns([
+                [
+                    'field' => 'Testfield',
+                    'type' => FieldType::DECIMAL
+                ]
+            ])
             ->setOwner($this->getReference('admin-user'));
 
         $manager->persist($api);
