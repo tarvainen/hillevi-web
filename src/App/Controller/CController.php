@@ -181,4 +181,24 @@ class CController extends Controller
 
         return $result;
     }
+
+    /**
+     * Maps the hash from the request.
+     *
+     * @param   array $values
+     *
+     * @return  array
+     */
+    protected function mapHashFromRequest(array $values)
+    {
+        $request = Request::createFromGlobals();
+
+        $result = array();
+
+        foreach ($values as $value) {
+            $result[$value] = $request->get($value);
+        }
+
+        return $result;
+    }
 }

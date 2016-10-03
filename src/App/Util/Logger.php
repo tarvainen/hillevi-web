@@ -20,6 +20,6 @@ class Logger
      */
     public static function log($msg)
     {
-        file_put_contents(__DIR__ . '/../../../var/logs/debug.log', print_r($msg . PHP_EOL, true), FILE_APPEND);
+        file_put_contents(__DIR__ . '/../../../var/logs/debug.log', print_r($msg, true) . PHP_EOL, FILE_APPEND);
     }
 }

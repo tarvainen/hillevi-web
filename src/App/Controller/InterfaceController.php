@@ -143,14 +143,12 @@ class InterfaceController extends CController
          */
         $api = $em->find('App:ApiReader', $id);
 
-        $api->fromArray($request->request->all());
+        $data = $this->mapHashFromRequest(['name', 'type', 'url']);
+
+        $api->fromArray($data);
 
         $em->persist($api);
         $em->flush();
-
-        if (!$em->contains($api)) {
-            throw new ActionFailedException('update');
-        }
 
         return new JsonResponse('OK');
     }
