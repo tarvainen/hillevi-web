@@ -6,6 +6,7 @@ use App\Entity\ApiReader;
 use App\Exception\ActionFailedException;
 use App\Exception\NotFoundException;
 use App\Naming\FieldType;
+use App\Util\Logger;
 use Doctrine\ORM\EntityManager;
 use JMS\Serializer\SerializerBuilder;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -142,8 +143,7 @@ class InterfaceController extends CController
          */
         $api = $em->find('App:ApiReader', $id);
 
-        $data = $this->mapHashFromRequest(['name', 'type', 'url']);
-
+        $data = $this->mapHashFromRequest(['name', 'type', 'url', 'columns']);
         $api->fromArray($data);
 
         $em->persist($api);
