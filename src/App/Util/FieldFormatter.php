@@ -34,4 +34,16 @@ class FieldFormatter
                 return null;
         }
     }
+
+    /**
+     * Returns the safely formatted text to be used as table name for example.
+     *
+     * @param string $val
+     *
+     * @return mixed
+     */
+    public static function toTableNameFormat($val)
+    {
+        return strtolower(preg_replace('/[^A-Za-z_]/', '', $val));
+    }
 }

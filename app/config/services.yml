@@ -11,3 +11,7 @@ services:
         class: App\Annotation\AnnotationDriver
         tags: [{name: kernel.event_listener, event: kernel.controller, method: onKernelController}]
         arguments: ['@annotation_reader', '@service_container']
+    my.listener:
+        class: App\Listener\PostUpdate
+        tags:
+            - { name: doctrine.event_listener, event: postUpdate }

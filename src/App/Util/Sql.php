@@ -59,7 +59,7 @@ class Sql
             '
                 %1$s %2$s
             ',
-            /** 1 */ $title,
+            /** 1 */ FieldFormatter::toTableNameFormat($title),
             /** 2 */ self::$dbTypes[$type]
         );
     }

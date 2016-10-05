@@ -2,9 +2,12 @@
 
 namespace App\Entity;
 
+use App\Util\Sql;
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\ManyToOne;
 use JMS\Serializer\Annotation\Type;
+use JMS\Serializer\Tests\Fixtures\Log;
 
 /**
  * ApiReader
@@ -291,5 +294,41 @@ class ApiReader extends EntityBase
     public function getActive()
     {
         return $this->active;
+    }
+
+    /**
+     * The method to run after this entity has changed. This is called from
+     * the postUpdate service.
+     *
+     * @see PostUpdate
+     *
+     * @param   EntityManager $em
+     *
+     * @return void
+     */
+    public function postUpdate($em)
+    {
+        $tableName = $this->getTableName();
+
+        // Drop the existing table if exists
+        $sql = sprintf('DROP TABLE IF EXISTS %1$s', $tableName);
+        $em->getConnection()->executeQuery($sql);
+
+        $sqlScripts = [];
+
+        // Generate the new table creation script
+        foreach ($this->columns as $column) {
+            $sqlScripts[] = Sql::create($column['field'], $column['type']);
+        }
+
+        $sql = sprintf(
+            '
+                CREATE TABLE %1$s (%2$s);
+            ',
+            /** 1 */ $tableName,
+            /** 2 */ implode(',', $sqlScripts)
+        );
+
+        $em->getConnection()->executeQuery($sql);
     }
 }
