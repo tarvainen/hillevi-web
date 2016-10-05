@@ -40,17 +40,47 @@ abstract class AbstractReader
     /**
      * Executes the reader. Reads the data from the api, validates the returned data and saves it to the database.
      *
-     * @return void
+     * @return mixed
      */
     public function execute()
     {
         if ($this->isValid()) {
-            $this->saveData(
+            return $this->mapData(
                 $this->handleData(
                     $this->getData()
                 )
             );
         }
+
+        return null;
+    }
+
+    /**
+     * Set columns for this reader.
+     *
+     * @param $columns
+     *
+     * @return AbstractReader
+     */
+    public function setColumns($columns)
+    {
+        $this->columns = $columns;
+
+        return $this;
+    }
+
+    /**
+     * Set url for this reader.
+     *
+     * @param $url
+     *
+     * @return AbstractReader
+     */
+    public function setUrl($url)
+    {
+        $this->url = $url;
+
+        return $this;
     }
 
     /**
@@ -70,13 +100,13 @@ abstract class AbstractReader
     abstract protected function handleData($data);
 
     /**
-     * Function to save the data to the database.
+     * Maps the fields from the data returned from the interface.
      *
-     * @param   array $data
+     * @param array $data
      *
-     * @return  mixed
+     * @return mixed
      */
-    abstract protected function saveData($data);
+    abstract protected function mapData($data);
 
     /**
      * Check if this instance of the reader is valid. We will execute only this
