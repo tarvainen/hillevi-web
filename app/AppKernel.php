@@ -16,7 +16,6 @@ class AppKernel extends Kernel
             new Doctrine\Bundle\DoctrineBundle\DoctrineBundle(),
             new Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
             new \Nelmio\CorsBundle\NelmioCorsBundle(),
-            new Cron\CronBundle\CronCronBundle(),
             new App\App(),
         ];
 
