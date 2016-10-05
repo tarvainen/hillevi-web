@@ -2,7 +2,9 @@
 
 namespace App\Command;
 
-use App\Util\Logger;
+use App\Entity\ApiReader;
+use App\Reader\JsonInterfaceReader;
+use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -32,6 +34,44 @@ class CronCommand extends ContainerAwareCommand
      */
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        Logger::log('cron runs!!');
+        $doctrine = $this->getContainer()->get('doctrine');
+
+        /**
+         * @var EntityManager $em
+         */
+        $em = $doctrine->getManager();
+
+        $apis = $em->getRepository('App:ApiReader')->findAll();
+
+        foreach ($apis as $api) {
+            /** @var ApiReader $api */
+            // TODO: check api type
+            $reader = new JsonInterfaceReader();
+            $reader->setUrl($api->getUrl());
+
+            $reader->setColumns($api->getColumns());
+
+            $data = $reader->execute();
+            $data['time'] = date('Y-m-d H:i:s');
+
+            $bindings = [];
+
+            foreach ($data as $key => $value) {
+                $bindings[':' . $key] = $value;
+            }
+
+            $sql = sprintf(
+                'INSERT INTO %1$s (%2$s) VALUES(%3$s)',
+                /** 1 */
+                $api->getTableName(),
+                /** 2 */
+                implode(',', array_keys($data)),
+                /** 3 */
+                implode(',', array_keys($bindings))
+            );
+
+            $stmt = $em->getConnection()->prepare($sql);
+            $stmt->execute($bindings);
+        }
     }
 }

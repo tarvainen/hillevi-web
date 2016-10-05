@@ -47,12 +47,7 @@ abstract class BaseInterfaceReader extends AbstractReader
             return !is_null($value) && array_key_exists($key, $columns);
         };
 
-        $format = function ($key, $value) use ($columns) {
-            $value = FieldFormatter::format($value, $columns[$key]);
-        };
-
         array_filter($data, $filter, ARRAY_FILTER_USE_BOTH);
-        array_map($format, array_keys($data), $data);
 
         return $data;
     }

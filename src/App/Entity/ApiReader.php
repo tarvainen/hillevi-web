@@ -314,7 +314,10 @@ class ApiReader extends EntityBase
         $sql = sprintf('DROP TABLE IF EXISTS %1$s', $tableName);
         $em->getConnection()->executeQuery($sql);
 
-        $sqlScripts = [];
+        $sqlScripts = [
+            'id INT PRIMARY KEY AUTO_INCREMENT',
+            'time DATETIME DEFAULT NULL',
+        ];
 
         // Generate the new table creation script
         foreach ($this->columns as $column) {
