@@ -91,6 +91,16 @@ class ApiReader extends EntityBase
     private $owner;
 
     /**
+     * The interfal of the api reading. Defaults to one day.
+     *
+     * @var int
+     *
+     * @ORM\Column(name="interval", type="integer")
+     * @Type("integer")
+     */
+    private $interval = 3600;
+
+    /**
      * Get id
      *
      * @return int
@@ -294,6 +304,30 @@ class ApiReader extends EntityBase
     public function getActive()
     {
         return $this->active;
+    }
+
+    /**
+     * Set interval
+     *
+     * @param int $interval
+     *
+     * @return ApiReader
+     */
+    public function setInterval($interval)
+    {
+        $this->interval = $interval;
+
+        return $this;
+    }
+
+    /**
+     * Returns the interval
+     *
+     * @return int
+     */
+    public function getInterval()
+    {
+        return $this->interval;
     }
 
     /**
