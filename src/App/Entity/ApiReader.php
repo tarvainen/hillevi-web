@@ -95,7 +95,7 @@ class ApiReader extends EntityBase
      *
      * @var int
      *
-     * @ORM\Column(name="interval", type="integer")
+     * @ORM\Column(name="intervalTime", type="integer")
      * @Type("integer")
      */
     private $interval = 3600;
@@ -343,6 +343,10 @@ class ApiReader extends EntityBase
     public function postUpdate($em)
     {
         $tableName = $this->getTableName();
+
+        if (is_null($this->columns)) {
+            $this->columns = [];
+        }
 
         // Drop the existing table if exists
         $sql = sprintf('DROP TABLE IF EXISTS %1$s', $tableName);

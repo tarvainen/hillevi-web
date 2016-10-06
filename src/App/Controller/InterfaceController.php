@@ -7,9 +7,8 @@ use App\Exception\ActionFailedException;
 use App\Exception\NotFoundException;
 use App\Naming\ApiType;
 use App\Naming\FieldType;
-use App\Util\Logger;
+use App\Util\FieldFormatter;
 use Doctrine\ORM\EntityManager;
-use JMS\Serializer\SerializerBuilder;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -46,7 +45,7 @@ class InterfaceController extends CController
             ->getEntityManager()
             ->createQueryBuilder()
             ->from('App:ApiReader', 'a')
-            ->select('partial a.{id, name, type, url, columns, lastUpdate, active}')
+            ->select('partial a.{id, name, type, url, columns, lastUpdate, active, interval}')
             ->where('a.owner = :id')
             ->setParameter(':id', $this->getUser()['uid'])
             ->getQuery();
@@ -68,9 +67,9 @@ class InterfaceController extends CController
      */
     public function addInterfaceAction(Request $request)
     {
-        $data = $this->mapHashFromRequest(['name', ' type', 'url']);
+        $data = $this->mapHashFromRequest(['name', ' type', 'url', 'type', 'interval']);
 
-        $data['tableName'] = preg_replace('/[^A-Za-z_]/', '', strtolower($data['name']));
+        $data['tableName'] = FieldFormatter::toTableNameFormat($data['name']);
         $data['active'] = true;
         $data['columns'] = [];
 
@@ -78,6 +77,7 @@ class InterfaceController extends CController
         $api->fromArray($data);
 
         $api->setOwner($this->getUserEntity());
+        $api->setColumns([]);
         $api->setLastUpdate(new \DateTime());
 
         $em = $this->getDoctrine()->getManager();
