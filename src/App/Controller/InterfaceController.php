@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\ApiReader;
 use App\Exception\ActionFailedException;
 use App\Exception\NotFoundException;
+use App\Naming\ApiType;
 use App\Naming\FieldType;
 use App\Util\Logger;
 use Doctrine\ORM\EntityManager;
@@ -153,9 +154,28 @@ class InterfaceController extends CController
     }
 
     /**
-     * Action to fetch all possible interface types.
+     * Action to fetch all possible interface field types.
      *
      * @Route("fields/types")
+     * @Method("POST")
+     *
+     * @return JsonResponse
+     */
+    public function getInterfaceFieldTypesAction()
+    {
+        $types = [
+            FieldType::INTEGER,
+            FieldType::DECIMAL,
+            FieldType::STRING
+        ];
+
+        return new JsonResponse($types);
+    }
+
+    /**
+     * Action to fetch all possible interface types.
+     *
+     * @Route("types")
      * @Method("POST")
      *
      * @return JsonResponse
@@ -163,9 +183,9 @@ class InterfaceController extends CController
     public function getInterfaceTypesAction()
     {
         $types = [
-            FieldType::INTEGER,
-            FieldType::DECIMAL,
-            FieldType::STRING
+            ApiType::INNER,
+            ApiType::JSON,
+            ApiType::XML
         ];
 
         return new JsonResponse($types);
