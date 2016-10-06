@@ -34,7 +34,7 @@ class Sql
      *
      * @var array
      */
-    private static $dbTypes = array(
+    public static $dbTypes = array(
         self::TYPE_INT      => self::DB_TYPE_INT,
         self::TYPE_STRING   => self::DB_TYPE_STRING,
         self::TYPE_DECIMAL  => self::DB_TYPE_DECIMAL,

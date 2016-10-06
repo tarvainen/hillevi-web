@@ -41,7 +41,17 @@ class CronCommand extends ContainerAwareCommand
          */
         $em = $doctrine->getManager();
 
-        $apis = $em->getRepository('App:ApiReader')->findAll();
+        $apis = $em->getRepository('App:ApiReader')
+            ->createQueryBuilder('a')
+            ->where(
+                '
+                    a.active = 1 AND 
+                    DATE_ADD(a.lastRun, (a.interval * 60), \'second\') < CURRENT_TIMESTAMP() AND 
+                    a.type != \'inner\'
+                '
+            )
+            ->getQuery()
+            ->getResult();
 
         foreach ($apis as $api) {
             /** @var ApiReader $api */
@@ -52,7 +62,7 @@ class CronCommand extends ContainerAwareCommand
             $reader->setColumns($api->getColumns());
 
             $data = $reader->execute();
-            $data['time'] = date('Y-m-d H:i:s');
+            $data['REQUESTED_AT'] = date('Y-m-d H:i:s');
 
             $bindings = [];
 
@@ -72,6 +82,10 @@ class CronCommand extends ContainerAwareCommand
 
             $stmt = $em->getConnection()->prepare($sql);
             $stmt->execute($bindings);
+
+            $api->setLastRun(new \DateTime());
+            $em->persist($api);
+            $em->flush();
         }
     }
 }

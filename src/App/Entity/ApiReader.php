@@ -76,6 +76,14 @@ class ApiReader extends EntityBase
     private $lastUpdate;
 
     /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="lastRun", type="datetime")
+     * @Type("DateTime")
+     */
+    private $lastRun;
+
+    /**
      * @var boolean
      *
      * @ORM\Column(name="active", type="boolean")
@@ -91,7 +99,7 @@ class ApiReader extends EntityBase
     private $owner;
 
     /**
-     * The interfal of the api reading. Defaults to one day.
+     * The interval of the api reading. Defaults to one day.
      *
      * @var int
      *
@@ -331,45 +339,26 @@ class ApiReader extends EntityBase
     }
 
     /**
-     * The method to run after this entity has changed. This is called from
-     * the postUpdate service.
+     * Set last run
      *
-     * @see PostUpdate
+     * @param   \DateTime $lastRun
      *
-     * @param   EntityManager $em
-     *
-     * @return void
+     * @return ApiReader
      */
-    public function postUpdate($em)
+    public function setLastRun($lastRun)
     {
-        $tableName = $this->getTableName();
+        $this->lastRun = $lastRun;
 
-        if (is_null($this->columns)) {
-            $this->columns = [];
-        }
+        return $this;
+    }
 
-        // Drop the existing table if exists
-        $sql = sprintf('DROP TABLE IF EXISTS %1$s', $tableName);
-        $em->getConnection()->executeQuery($sql);
-
-        $sqlScripts = [
-            'id INT PRIMARY KEY AUTO_INCREMENT',
-            'time DATETIME DEFAULT NULL',
-        ];
-
-        // Generate the new table creation script
-        foreach ($this->columns as $column) {
-            $sqlScripts[] = Sql::create($column['field'], $column['type']);
-        }
-
-        $sql = sprintf(
-            '
-                CREATE TABLE %1$s (%2$s);
-            ',
-            /** 1 */ $tableName,
-            /** 2 */ implode(',', $sqlScripts)
-        );
-
-        $em->getConnection()->executeQuery($sql);
+    /**
+     * Returns the last run timestamp.
+     *
+     * @return \DateTime
+     */
+    public function getLastRun()
+    {
+        return $this->lastRun;
     }
 }

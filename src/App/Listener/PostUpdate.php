@@ -2,7 +2,6 @@
 
 namespace App\Listener;
 
-use App\Entity\ApiReader;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 
 /**
@@ -23,10 +22,6 @@ class PostUpdate
      */
     public function postUpdate(LifecycleEventArgs $args)
     {
-        $entity = $args->getEntity();
-
-        if ($entity instanceof ApiReader) {
-            $entity->postUpdate($args->getEntityManager());
-        }
+        // TODO: add some post update functionality
     }
 }
