@@ -2,7 +2,7 @@
 
 namespace App\Reader;
 
-use App\Naming\ApiType;
+use App\Util\ContentType;
 
 /**
  * A xml interface reader class.
@@ -18,7 +18,7 @@ class XmlInterfaceReader extends BaseInterfaceReader
      */
     public function __construct()
     {
-        $this->type = ApiType::XML;
+        $this->type = ContentType::TYPE_XML;
     }
 
     /**
