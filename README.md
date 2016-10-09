@@ -38,4 +38,9 @@ You have to install also few modules to make Hillevi run correctly.
 
 TODO: improve the installation guide
 
+#Setting everything up
+##Database
+Build up your database with fixtures by just typing ``bash bin/create_database.sh``. This will create your database and load fixture data into your database. By default there is a single user with username admin and password admin.
+##Setup server
+In your application root just run ``php bin/console server:start`` to set up the symfony server (dev) and ``php bin/console socket:start`` to open the web socket server for enabling notifications.
 
