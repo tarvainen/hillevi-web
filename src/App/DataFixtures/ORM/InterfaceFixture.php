@@ -32,6 +32,7 @@ class InterfaceFixture extends AbstractFixture implements OrderedFixtureInterfac
             ->setTableName('demo_api_table')
             ->setType('rest')
             ->setActive(true)
+            ->setLastRun(new \DateTime())
             ->setUrl('https://myexampleapiswhichdoesntreadllyexists.com/temperature/now')
             ->setColumns([
                 [
