@@ -4,6 +4,7 @@ namespace App\Annotation;
 
 use App\Entity\User;
 use App\Exception\UnauthorizedException;
+use App\Util\Logger;
 use Doctrine\ORM\EntityManager;
 use Namshi\JOSE\SimpleJWS;
 use Symfony\Component\HttpFoundation\Request;
@@ -34,11 +35,13 @@ class Permission extends ContainerAwareAnnotation
     /**
      * Does the validation for the annotation.
      *
+     * @param Request $request
+     *
      * @return void
      */
-    public function validate()
+    public function validate(Request $request)
     {
-        if (!$this->validateJWT()) {
+        if (!$this->validateJWT($request)) {
             throw new UnauthorizedException();
         }
 
@@ -71,12 +74,13 @@ class Permission extends ContainerAwareAnnotation
 
     /**
      * Validates the JWT on every route we have the @Permission set.
+     *
+     * @param Request $request
+     *
      * @return bool
      */
-    private function validateJWT()
+    private function validateJWT($request)
     {
-        $request = Request::createFromGlobals();
-
         $jwt = $request->headers->get('authorization');
 
         try {

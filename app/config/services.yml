@@ -10,7 +10,7 @@ services:
     annotation_driver:
         class: App\Annotation\AnnotationDriver
         tags: [{name: kernel.event_listener, event: kernel.controller, method: onKernelController}]
-        arguments: ['@annotation_reader', '@service_container']
+        arguments: ['@annotation_reader', '@service_container', '@request_stack']
     my.listener:
         class: App\Listener\PostUpdate
         tags:

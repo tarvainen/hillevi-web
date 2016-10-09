@@ -2,9 +2,10 @@
 
 namespace App\Annotation;
 
-use App\Exception\UnauthorizedException;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Symfony\Component\DependencyInjection\Container;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 
 /**
@@ -27,15 +28,22 @@ class AnnotationDriver
     private $container;
 
     /**
+     * @var Request
+     */
+    private $request;
+
+    /**
      * AnnotationDriver constructor.
      *
      * @param AnnotationReader $reader
      * @param Container $container
+     * @param RequestStack $requestStack
      */
-    public function __construct($reader, $container)
+    public function __construct($reader, $container, $requestStack)
     {
         $this->reader = $reader;
         $this->container = $container;
+        $this->request = $requestStack->getCurrentRequest();
     }
 
     /**
@@ -61,7 +69,7 @@ class AnnotationDriver
                  */
                 $configuration->setContainer($this->container);
                 $configuration->setController($controller[0]);
-                $configuration->validate();
+                $configuration->validate($this->request);
             }
         }
     }

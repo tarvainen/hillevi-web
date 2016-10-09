@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Annotation;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * The abstract base class for the annotations.
@@ -14,9 +15,11 @@ abstract class AbstractAnnotation
     /**
      * Validates some data due to the annotation content maybe? Implement this in the child class.
      *
+     * @param Request $request
+     *
      * @return mixed
      */
-    abstract public function validate();
+    abstract public function validate(Request $request);
 
     /**
      * Parses the annotation value from the whole string.

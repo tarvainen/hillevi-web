@@ -89,6 +89,8 @@ class AuthController extends CController
      * @Route("settings/save")
      * @Method("POST")
      *
+     * @param Request $request
+     *
      * @return JsonResponse
      */
     public function updateAction(Request $request)

@@ -113,7 +113,7 @@ class CController extends Controller
      */
     protected function getJWS()
     {
-        $request = Request::createFromGlobals();
+        $request = $this->getRequest();
 
         if (!empty($request->headers->get('authorization'))) {
             try {
@@ -171,7 +171,7 @@ class CController extends Controller
      */
     protected function mapFromRequest(array $values)
     {
-        $request = Request::createFromGlobals();
+        $request = $this->getRequest();
 
         $result = array();
 
@@ -191,7 +191,7 @@ class CController extends Controller
      */
     protected function mapHashFromRequest(array $values)
     {
-        $request = Request::createFromGlobals();
+        $request = $this->getRequest();
 
         $result = array();
 
@@ -200,5 +200,17 @@ class CController extends Controller
         }
 
         return $result;
+    }
+
+    /**
+     * The test-safe way to get the current request.
+     *
+     * DO _NOT_ USE Request::createFromGlobals() !!
+     *
+     * @return mixed
+     */
+    protected function getRequest()
+    {
+        return $this->container->get('request_stack')->getCurrentRequest();
     }
 }
