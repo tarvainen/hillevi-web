@@ -86,6 +86,14 @@ class User extends EntityBase
     private $rights;
 
     /**
+     * @ManyToMany(targetEntity="Notification")
+     * @JoinTable(name="users_notifications", joinColumns={@JoinColumn(name="user_id", referencedColumnName="id")})
+     *
+     * @var ArrayCollection
+     */
+    private $notifications;
+
+    /**
      * @OneToOne(targetEntity="Settings")
      *
      * @var Settings
@@ -95,6 +103,7 @@ class User extends EntityBase
     public function __construct()
     {
         $this->rights = new ArrayCollection();
+        $this->notifications = new ArrayCollection();
     }
 
     /**
@@ -321,6 +330,30 @@ class User extends EntityBase
     public function getSettings()
     {
         return $this->settings;
+    }
+
+    /**
+     * Add a notification for the user.
+     *
+     * @param  Notification $notification
+     *
+     * @return User
+     */
+    public function addNotification($notification)
+    {
+        $this->notifications->add($notification);
+
+        return $this;
+    }
+
+    /**
+     * Get notifications.
+     *
+     * @return ArrayCollection
+     */
+    public function getNotifications()
+    {
+        return $this->notifications;
     }
 
     /**
