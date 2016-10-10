@@ -319,6 +319,53 @@ class InterfaceController extends CController
     }
 
     /**
+     * A route for removing api rows.
+     *
+     * @Permission("interface:create")
+     *
+     * @Route("data/rows/remove")
+     * @Method("POST")
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function removeRowsAction(Request $request)
+    {
+        list($id, $rowIds) = $this->mapFromRequest(['id', 'rows']);
+
+        $rows = explode(',', $rowIds);
+
+        $rows = array_map('intval', $rows);
+
+        $em = $this->getDoctrine()->getManager();
+
+        /**
+         * @var ApiReader $api
+         */
+        $api = $em->find('App:ApiReader', $id);
+
+        if (!$api) {
+            throw new NotFoundException('ApiReader');
+        }
+
+        $sql = sprintf(
+            '
+              DELETE FROM
+                %1$s
+              WHERE
+                ID IN (%2$s)
+            ',
+            /** 1 */ $api->getTableName(),
+            /** 2 */ implode(',', $rows)
+        );
+
+        $this->getDoctrine()->getConnection()->query($sql);
+
+        return new JsonResponse('OK');
+    }
+
+    /**
      * Updates the table's columns using the old column array and the new column array
      * as reference to check if there is some changes.
      *
