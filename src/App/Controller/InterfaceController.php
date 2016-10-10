@@ -9,6 +9,7 @@ use App\Naming\ApiType;
 use App\Naming\FieldType;
 use App\Util\FieldFormatter;
 use App\Util\Sql;
+use Doctrine\DBAL\Driver\PDOStatement;
 use Doctrine\ORM\EntityManager;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -246,6 +247,75 @@ class InterfaceController extends CController
         ];
 
         return new JsonResponse($types);
+    }
+
+    /**
+     * Route for fetching data from the specified interface.
+     *
+     * @param Request $request
+     *
+     * @Permission("perm=interface:create")
+     *
+     * @Route("data")
+     * @Method("POST")
+     *
+     * @return JsonResponse
+     */
+    public function getDataAction(Request $request)
+    {
+        list($id) = $this->mapFromRequest(['id']);
+
+        $em = $this->getDoctrine()->getManager();
+
+        /**
+         * @var ApiReader $api
+         */
+        $api = $em->find('App:ApiReader', $id);
+
+        $sql = sprintf(
+            '
+              SELECT *
+              FROM %1$s
+            ',
+            /** 1 */ $api->getTableName()
+        );
+
+        /**
+         * @var PDOStatement $stmt
+         */
+        $stmt = $this->getDoctrine()->getConnection()->query($sql);
+
+        return new JsonResponse($stmt->fetchAll(\PDO::FETCH_ASSOC));
+    }
+
+    /**
+     * Route for getting the schema of the api table.
+     *
+     * @param Request $request
+     *
+     * @Permission("perm=interface:create")
+     *
+     * @Route("schema")
+     * @Method("POST")
+     *
+     * @return JsonResponse
+     */
+    public function getSchemaAction(Request $request)
+    {
+        $id = $request->get('id', -1);
+
+        $em = $this->getDoctrine()->getManager();
+
+        /**
+         * @var ApiReader $api
+         */
+        $api = $em->find('App:ApiReader', $id);
+
+        if (!$api) {
+            throw new NotFoundException('ApiReader');
+        }
+
+        return new JsonResponse($api->getColumns());
     }
 
     /**
