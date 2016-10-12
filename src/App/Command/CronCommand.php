@@ -3,6 +3,7 @@
 namespace App\Command;
 
 use App\Entity\ApiReader;
+use App\Entity\Notification;
 use App\Reader\JsonInterfaceReader;
 use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
@@ -84,7 +85,14 @@ class CronCommand extends ContainerAwareCommand
             $stmt->execute($bindings);
 
             $api->setLastRun(new \DateTime());
+
+            $notification = new Notification();
+            $notification->setUser($api->getOwner());
+            $notification->setContent('Testinotifikaatio, joka lähetetään cronilta');
+
             $em->persist($api);
+            $em->persist($notification);
+
             $em->flush();
         }
     }

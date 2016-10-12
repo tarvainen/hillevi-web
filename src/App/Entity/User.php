@@ -86,8 +86,7 @@ class User extends EntityBase
     private $rights;
 
     /**
-     * @ManyToMany(targetEntity="Notification")
-     * @JoinTable(name="users_notifications", joinColumns={@JoinColumn(name="user_id", referencedColumnName="id")})
+     * @OneToMany(targetEntity="Notification", mappedBy="user", cascade={"all"})
      *
      * @var ArrayCollection
      */
@@ -330,20 +329,6 @@ class User extends EntityBase
     public function getSettings()
     {
         return $this->settings;
-    }
-
-    /**
-     * Add a notification for the user.
-     *
-     * @param  Notification $notification
-     *
-     * @return User
-     */
-    public function addNotification($notification)
-    {
-        $this->notifications->add($notification);
-
-        return $this;
     }
 
     /**

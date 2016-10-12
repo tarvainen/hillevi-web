@@ -25,7 +25,8 @@ class Notification extends ContainerAwareSocket implements MessageComponentInter
      * Notification constructor.
      * @param \Symfony\Component\DependencyInjection\Container $container
      */
-    public function __construct($container) {
+    public function __construct($container)
+    {
         parent::__construct($container);
 
         $this->clients = new \SplObjectStorage;
