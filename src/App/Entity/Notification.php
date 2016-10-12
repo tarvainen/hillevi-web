@@ -7,6 +7,7 @@ use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\JoinTable;
 use JMS\Serializer\Annotation\Groups;
+use JMS\Serializer\Annotation\Type;
 
 /**
  * Notification
@@ -55,12 +56,28 @@ class Notification
     private $user;
 
     /**
+     * @ORM\Column(name="dismissed", type="boolean")
+     *
      * @var bool
      *
      * @Groups({"common"})
      */
     private $dismissed = false;
 
+    /**
+     * @ORM\Column(name="timestamp", type="datetime")
+     *
+     * @Groups({"common"})
+     *
+     * @var \DateTime
+     */
+    private $timestamp;
+
+
+    public function __construct()
+    {
+        $this->timestamp = new \DateTime();
+    }
 
     /**
      * Get id
@@ -166,5 +183,29 @@ class Notification
     public function getDismissed()
     {
         return $this->dismissed;
+    }
+
+    /**
+     * Set timestamp
+     *
+     * @param  \DateTime $timestamp
+     *
+     * @return Notification
+     */
+    public function setTimestamp($timestamp)
+    {
+        $this->timestamp = $timestamp;
+
+        return $this;
+    }
+
+    /**
+     * Get timestamp
+     *
+     * @return \DateTime
+     */
+    public function getTimestamp()
+    {
+        return $this->timestamp;
     }
 }

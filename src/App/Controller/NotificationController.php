@@ -3,7 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Notification;
-use App\Util\Logger;
+use Doctrine\ORM\EntityManager;
 use JMS\Serializer\SerializationContext;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -35,18 +35,59 @@ class NotificationController extends CController
      */
     public function getNotificationsAction($amount, Request $request)
     {
-        $data = $this
-            ->getUserEntity()
-            ->getNotifications()
-            ->toArray()
-        ;
+        $notifications = $this
+            ->getDoctrine()
+            ->getManager()
+            ->getRepository('App:Notification')
+            ->findBy(
+                [
+                    'user' => $this->getUserEntity()->getId(),
+                    'dismissed' => false
+                ]
+            );
 
         return new Response(
             $this->serializer->serialize(
-                $data,
+                $notifications,
                 'json',
                 SerializationContext::create()->setGroups(['common'])
             )
         );
+    }
+
+    /**
+     * Route for dismissing the notifications.
+     *
+     * @Route("dismiss")
+     * @Method("POST")
+     *
+     * @Permission("notification")
+     *
+     * @param Request $request
+     *
+     * @return Response
+     */
+    public function dismissNotificationsAction(Request $request)
+    {
+        /**
+         * @var EntityManager $em
+         */
+        $em = $this->getDoctrine()->getManager();
+        $notifications = $em->getRepository('App:Notification')->findBy(
+            [
+                'user' => $this->getUserEntity()->getId(),
+                'id' => $request->get('id', [])
+            ]
+        );
+
+        foreach ($notifications as $notification) {
+            /** @var Notification $notification */
+            $notification->setDismissed(true);
+            $em->persist($notification);
+        }
+
+        $em->flush();
+
+        return new Response('OK');
     }
 }
