@@ -4,6 +4,7 @@ namespace App\Command;
 
 use App\Entity\ApiReader;
 use App\Entity\Notification;
+use App\Notification\Notifier;
 use App\Reader\JsonInterfaceReader;
 use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
@@ -34,6 +35,20 @@ class CronCommand extends ContainerAwareCommand
      * @return void
      */
     public function execute(InputInterface $input, OutputInterface $output)
+    {
+        $onConnection = function () {
+            $this->checkApis();
+        };
+
+        $onReject = $onConnection;
+
+        Notifier::connect($this->getContainer(), $onConnection, $onReject);
+    }
+
+    /**
+     * Function to run api check.
+     */
+    private function checkApis()
     {
         $doctrine = $this->getContainer()->get('doctrine');
 
@@ -90,10 +105,20 @@ class CronCommand extends ContainerAwareCommand
             $notification->setUser($api->getOwner());
             $notification->setContent('Testinotifikaatio, joka lähetetään cronilta');
 
+            Notifier::notify(
+                $api->getOwner()->getId(),
+                [
+                    'from' => 'cron',
+                    'tag' => 'NOTIFICATION_YOU_HAVE_NEW_NOTIFICATIONS'
+                ]
+            );
+
             $em->persist($api);
             $em->persist($notification);
 
             $em->flush();
         }
+
+        Notifier::disconnect();
     }
 }

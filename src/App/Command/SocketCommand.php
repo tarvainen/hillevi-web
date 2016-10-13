@@ -39,10 +39,12 @@ class SocketCommand extends ContainerAwareCommand
      */
     public function execute(InputInterface $input, OutputInterface $output)
     {
+        $notification = new Notification($this->getContainer());
+
         $server = IoServer::factory(
             new HttpServer(
                 new WsServer(
-                    new Notification($this->getContainer())
+                    $notification
                 )
             ),
             $this->getContainer()->getParameter('web_socket_port')

@@ -2,6 +2,8 @@
 
 namespace App\Socket;
 
+use App\Entity\User;
+use App\Util\Json;
 use Doctrine\ORM\EntityManager;
 use Namshi\JOSE\SimpleJWS;
 use Ratchet\ConnectionInterface;
@@ -17,20 +19,11 @@ use Ratchet\MessageComponentInterface;
 class Notification extends ContainerAwareSocket implements MessageComponentInterface
 {
     /**
-     * @var \SplObjectStorage
+     * Container for the clients.
+     *
+     * @var array
      */
-    protected $clients;
-
-    /**
-     * Notification constructor.
-     * @param \Symfony\Component\DependencyInjection\Container $container
-     */
-    public function __construct($container)
-    {
-        parent::__construct($container);
-
-        $this->clients = new \SplObjectStorage;
-    }
+    protected $clients = [];
 
     /**
      * Method to be called when someone or something connects to the socket.
@@ -55,9 +48,50 @@ class Notification extends ContainerAwareSocket implements MessageComponentInter
      */
     public function onMessage(ConnectionInterface $from, $msg)
     {
-        if ($this->auth($msg)) {
-            $this->clients->attach($from);
-            $from->send('REALTIME_CONNECTION_OPENED');
+        if ($data = Json::decode($msg)) { // We are sending message internally
+            if ($this->validateSecret($data['secret'])) {
+                $this->notify((int)$data['userId'], $data['data']);
+            }
+        } elseif ($user = $this->auth($msg)) {
+            $this->clients[$from->resourceId] = [
+                'user' => $user,
+                'conn' => $from
+            ];
+
+            $from->send(
+                Json::encode(
+                    [
+                        'from' => 'hillevi',
+                        'tag' => 'REALTIME_CONNECTION_OPENED'
+                    ]
+                )
+            );
+        }
+    }
+
+    /**
+     * Sends notification for the specific user.
+     *
+     * @param $userId
+     * @param $msg
+     */
+    public function notify($userId, $msg)
+    {
+        /**
+         * @var User $user
+         * @var ConnectionInterface $conn
+         */
+        foreach ($this->clients as $client) {
+            $user = $client['user'];
+            $conn = $client['conn'];
+
+            if ($user->getId() === $userId) {
+                $conn->send(
+                    Json::encode(
+                        $msg
+                    )
+                );
+            }
         }
     }
 
@@ -70,7 +104,7 @@ class Notification extends ContainerAwareSocket implements MessageComponentInter
      */
     public function onClose(ConnectionInterface $conn)
     {
-        $this->clients->detach($conn);
+        unset($this->clients[$conn->resourceId]);
     }
 
     public function onError(ConnectionInterface $conn, \Exception $e)
@@ -82,6 +116,7 @@ class Notification extends ContainerAwareSocket implements MessageComponentInter
      * Function to authenticate the user.
      *
      * @param   string  $jwt
+     *
      * @return  bool
      */
     private function auth($jwt)
@@ -108,6 +143,19 @@ class Notification extends ContainerAwareSocket implements MessageComponentInter
             return false;
         }
 
-        return $user->getToken() === $jwt;
+        return $user->getToken() === $jwt ? $user : null;
+    }
+
+    /**
+     * Validates that we are coming from the application
+     * by using the secret we have defined in to the parameters.yml
+     *
+     * @param string $secret
+     *
+     * @return bool
+     */
+    public function validateSecret($secret)
+    {
+        return $secret === $this->container->getParameter('notification_secret');
     }
 }
