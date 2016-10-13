@@ -6,6 +6,7 @@ use App\Entity\ApiReader;
 use App\Entity\Notification;
 use App\Notification\Notifier;
 use App\Reader\JsonInterfaceReader;
+use App\Util\Json;
 use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
@@ -77,6 +78,8 @@ class CronCommand extends ContainerAwareCommand
 
             $reader->setColumns($api->getColumns());
 
+            $micros = microtime();
+
             $data = $reader->execute();
             $data['REQUESTED_AT'] = date('Y-m-d H:i:s');
 
@@ -103,7 +106,19 @@ class CronCommand extends ContainerAwareCommand
 
             $notification = new Notification();
             $notification->setUser($api->getOwner());
-            $notification->setContent('Testinotifikaatio, joka lähetetään cronilta');
+
+            $notification->setContent(
+                Json::encode(
+                    [
+                        'tag' => 'YOUR_INTERFACES_HAS_BEEN_READ',
+                        'extra' => sprintf(
+                            'url: %1$s, %2$s ms',
+                            /** 1 */ $api->getUrl(),
+                            /** 2 */ (microtime() - $micros) / 1000
+                        )
+                    ]
+                )
+            );
 
             Notifier::notify(
                 $api->getOwner()->getId(),
