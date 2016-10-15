@@ -15,9 +15,9 @@ class PermissionRepository extends BaseRepository
      *
      * @return PermissionRepository
      */
-    public function scopeRights()
+    public function my()
     {
-        // TODO: Implement scopeRights() method.
+        // TODO: Implement my() method.
         return $this;
     }
 }

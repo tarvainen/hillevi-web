@@ -11,12 +11,18 @@ namespace App\Repository;
 class ApiReaderRepository extends BaseRepository
 {
     /**
-     * Checks the user rights for this module.
+     * Returns the user's own data for this repository.
      *
-     * @return ApiReaderRepository
+     * @param int $userId
+     *
+     * @return array
      */
-    public function scopeRights()
+    public function my($userId = -1)
     {
-        return $this;
+        return $this->findBy(
+            [
+                'owner' => $userId
+            ]
+        );
     }
 }

@@ -8,9 +8,6 @@ use App\Util\FS;
 use JMS\Serializer\SerializerBuilder;
 use Namshi\JOSE\SimpleJWS;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\Config\Definition\Exception\Exception;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Base controller for all the other controllers.
@@ -212,5 +209,19 @@ class CController extends Controller
     protected function getRequest()
     {
         return $this->container->get('request_stack')->getCurrentRequest();
+    }
+
+    /**
+     * Shortcut for getting the entity manager.
+     *
+     * @param null|string $manager
+     *
+     * @return \Doctrine\Common\Persistence\ObjectManager|object
+     */
+    protected function manager($manager = null)
+    {
+        return $this
+            ->getDoctrine()
+            ->getManager($manager);
     }
 }

@@ -8,13 +8,13 @@ namespace App\Repository;
 class UserRepository extends BaseRepository
 {
     /**
-     * Checks user rights for this module.
+     * Returns the user's own data for this repository.
      *
      * @return UserRepository
      */
-    public function scopeRights()
+    public function my()
     {
-        // TODO: Implement scopeRights() method.
+        // TODO: Implement my() method.
 
         return $this;
     }

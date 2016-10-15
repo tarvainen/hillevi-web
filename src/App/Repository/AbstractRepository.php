@@ -13,5 +13,5 @@ use Doctrine\ORM\EntityRepository;
  */
 abstract class AbstractRepository extends EntityRepository
 {
-    abstract public function scopeRights();
+    abstract public function my();
 }
