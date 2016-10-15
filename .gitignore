@@ -23,4 +23,4 @@ vendor.css
 app-files.js
 *.log
 *.iml
-workspace.xml
+.idea/workspace.xml
