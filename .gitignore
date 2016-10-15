@@ -22,3 +22,5 @@ vendor.js
 vendor.css
 app-files.js
 *.log
+*.iml
+workspace.xml
