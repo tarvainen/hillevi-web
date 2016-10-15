@@ -2,9 +2,11 @@
 
 namespace App\Command;
 
+use App\Controller\InterfaceController;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * A non-doing command for testing different stuff.
@@ -35,6 +37,6 @@ class PlaygroundCommand extends ContainerAwareCommand
      */
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        // TODO
+
     }
 }
