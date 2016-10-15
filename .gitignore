@@ -16,7 +16,7 @@
 /web/bundles/
 /app/var/jwt/*
 !/app/var/jwt/.gitkeep
-/.idea/*
+.idea/
 /node_modules/*
 vendor.js
 vendor.css
