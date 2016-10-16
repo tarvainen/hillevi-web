@@ -92,7 +92,7 @@ class GraphController extends CController
         $start = new \DateTime($startDate);
         $end = new \DateTime($endDate);
 
-        $data = $this->fetchData($start, $end, $columns, $scale['type']);
+        $data = $this->fetchData($start, $end, $columns, $scale);
 
         return new JsonResponse($data);
     }

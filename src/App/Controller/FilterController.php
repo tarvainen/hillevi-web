@@ -78,15 +78,18 @@ class FilterController extends CController
         $result = [
             [
                 'id' => 0,
-                'name' => 'LINE_CHART'
+                'name' => 'LINE_CHART',
+                'type' => 'line'
             ],
             [
                 'id' => 1,
                 'name' => 'PIE_CHART',
+                'type' => 'pie'
             ],
             [
                 'id' => 2,
                 'name' => 'BAR_CHART',
+                'type' => 'bar'
             ],
         ];
 

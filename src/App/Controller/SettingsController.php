@@ -2,6 +2,10 @@
 
 namespace App\Controller;
 
+use App\Entity\SearchSetting;
+use App\Exception\ActionFailedException;
+use App\Util\Json;
+use Doctrine\DBAL\Query\QueryBuilder;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use App\Annotation\Permission;
@@ -61,5 +65,81 @@ class SettingsController extends CController
         $em->flush();
 
         return new JsonResponse('OK');
+    }
+
+    /**
+     * Action for fetching search settings for action.
+     *
+     * @param string  $action
+     * @param Request $request
+     *
+     * @Route("search/{action}")
+     * @Method("POST")
+     *
+     * @return JsonResponse
+     */
+    public function getSearchSettingsAction($action, Request $request)
+    {
+        $query = $this
+            ->manager()
+            ->createQueryBuilder();
+
+        /** @var QueryBuilder $query */
+        $data = $query->select('partial s.{id, name, setting}')
+            ->from('App:SearchSetting', 's')
+            ->where('s.user = :id AND s.module = :module')
+            ->setParameter(':id', $this->getUserEntity()->getId())
+            ->setParameter(':module', $action)
+            ->getQuery()
+            ->getArrayResult();
+
+        foreach ($data as &$item) {
+            $item['setting'] = Json::decode($item['setting']);
+        }
+
+        return new JsonResponse($data);
+    }
+
+    /**
+     * Action for saving search settings for action.
+     *
+     * @param string  $action
+     * @param Request $request
+     *
+     * @Route("search/{action}/save")
+     * @Method("POST")
+     *
+     * @return Response
+     */
+    public function saveSearchSettingsAction($action, Request $request)
+    {
+        list($name, $settings, $id) = $this->mapFromRequest(['name', 'settings', 'id']);
+
+        if (!is_null($id)) {
+            $setting = $this
+                ->manager()
+                ->getRepository('App:SearchSetting')
+                ->find($id);
+        } else {
+            $setting = new SearchSetting();
+        }
+
+        $setting
+            ->setName($name)
+            ->setSetting(Json::encode($settings))
+            ->setModule($action)
+            ->setUser($this->getUserEntity());
+
+        $this->manager()->persist($setting);
+        $this->manager()->flush();
+
+        if (!$this->manager()->contains($setting)) {
+            throw new ActionFailedException('save');
+        }
+
+        $data = $this->serializer->toArray($setting);
+        $data['setting'] = Json::decode($data['setting']);
+
+        return new JsonResponse($data);
     }
 }

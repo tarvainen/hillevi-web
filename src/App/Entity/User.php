@@ -93,6 +93,13 @@ class User extends EntityBase
     private $notifications;
 
     /**
+     * @OneToMany(targetEntity="SearchSetting", mappedBy="user", cascade={"all"})
+     *
+     * @var ArrayCollection
+     */
+    private $searchSettings;
+
+    /**
      * @OneToOne(targetEntity="Settings")
      *
      * @var Settings
@@ -103,6 +110,7 @@ class User extends EntityBase
     {
         $this->rights = new ArrayCollection();
         $this->notifications = new ArrayCollection();
+        $this->searchSettings = new ArrayCollection();
     }
 
     /**
@@ -339,6 +347,16 @@ class User extends EntityBase
     public function getNotifications()
     {
         return $this->notifications;
+    }
+
+    /**
+     * Get search settings.
+     *
+     * @return ArrayCollection
+     */
+    public function getSearchSettings()
+    {
+        return $this->searchSettings;
     }
 
     /**
