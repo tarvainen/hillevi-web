@@ -84,7 +84,8 @@ class InterfaceController extends CController
 
         $demoColumn = [
             md5(microtime()) => [
-                'field' => 'DEMO',
+                'name' => 'DemoField',
+                'field' => 'value',
                 'type' => FieldType::INTEGER
             ]
         ];

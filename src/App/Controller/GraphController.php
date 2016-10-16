@@ -53,6 +53,7 @@ class GraphController extends CController
             foreach ($apiColumns as $col) {
                 if (in_array($col['type'], ['int', 'decimal'])) {
                     $columns[] =[
+                        'name' => $col['name'],
                         'api' => $item->getName(),
                         'table' => $item->getTableName(),
                         'field' => $col['field']
@@ -165,7 +166,14 @@ class GraphController extends CController
             $stmt = $conn->query($sql);
 
             $result[] = $this->formatData($labels, $stmt->fetchAll(\PDO::FETCH_ASSOC));
-            $series[] = $column['api'] . ':' . $column['field'];
+
+            $series[] = sprintf(
+                '%1$s (%2$s::%3$s)',
+                /** 1 */ $column['name'],
+                /** 2 */ $column['api'],
+                /** 3 */ $column['field']
+            );
+
             $stmt->closeCursor();
             $stmt = null;
         }

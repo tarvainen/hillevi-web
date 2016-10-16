@@ -47,6 +47,7 @@ class SampleDataFixture extends AbstractFixture implements OrderedFixtureInterfa
                 'interval' => 3600,
                 'columns' => [
                     [
+                        'name' => 'Random int',
                         'field' => 'value',
                         'type' => FieldType::INTEGER
                     ]
@@ -65,6 +66,7 @@ class SampleDataFixture extends AbstractFixture implements OrderedFixtureInterfa
                 'interval' => 3600,
                 'columns' => [
                     [
+                        'name' => 'Random int',
                         'field' => 'value',
                         'type' => FieldType::INTEGER
                     ]
