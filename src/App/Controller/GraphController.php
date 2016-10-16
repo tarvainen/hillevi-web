@@ -76,7 +76,9 @@ class GraphController extends CController
      */
     public function getDataAction(Request $request)
     {
-        list($startDate, $endDate, $columns) = $this->mapFromRequest(['startDateTime', 'endDateTime', 'columns']);
+        list($startDate, $endDate, $columns, $scale) = $this->mapFromRequest(
+            ['startDateTime', 'endDateTime', 'columns', 'scale']
+        );
 
         if (empty($columns)) {
             throw new ActionFailedException('GetData');
@@ -89,7 +91,7 @@ class GraphController extends CController
         $start = new \DateTime($startDate);
         $end = new \DateTime($endDate);
 
-        $data = $this->fetchData($start, $end, $columns, '%m/%Y');
+        $data = $this->fetchData($start, $end, $columns, $scale['type']);
 
         return new JsonResponse($data);
     }
@@ -108,13 +110,16 @@ class GraphController extends CController
         $conn = $this->getDoctrine()->getConnection();
 
         $labels = $this->getLabels($startDate, $endDate, $groupBy);
-        $series = [];
 
+        $series = [];
         $result = [];
 
+        $grouping = $this->getGroupBy($groupBy);
+
         foreach ($columns as $column) {
-            $sql = sprintf(
-                '
+            if ($groupBy !== '%d.%m %k') {
+                $sql = sprintf(
+                    '
                   SELECT
                     DATE_FORMAT(T.FULLDATE, "%1$s") AS label,
                     SUM(x.%2$s) AS %2$s
@@ -123,14 +128,36 @@ class GraphController extends CController
                   CROSS JOIN %3$s x ON DATE(x.REQUESTED_AT) = T.FULLDATE 
                   WHERE
                     T.FULLDATE BETWEEN "%4$s" AND "%5$s"
-                  GROUP BY T.YEAR, T.MONTH_NUMBER;
+                  GROUP BY %6$s
+                  ORDER BY T.FULLDATE;
                 ',
-                /** 1 */ '%m/%Y',
-                /** 2 */ $column['field'],
-                /** 3 */ $column['table'],
-                /** 4 */ $startDate->format('Y-m-d'),
-                /** 5 */ $endDate->format('Y-m-d')
-            );
+                    /** 1 */ $groupBy,
+                    /** 2 */ $column['field'],
+                    /** 3 */ $column['table'],
+                    /** 4 */ $startDate->format('Y-m-d'),
+                    /** 5 */ $endDate->format('Y-m-d'),
+                    /** 6 */ $grouping
+                );
+            } else {
+                $sql = sprintf(
+                    '
+                      SELECT
+                        DATE_FORMAT(x.REQUESTED_AT, "%1$s:00") AS label,
+                        SUM(x.%2$s) AS %2$s
+                      FROM
+                        %3$s x
+                      WHERE
+                        x.REQUESTED_AT BETWEEN "%4$s" AND "%5$s"
+                      GROUP BY DATE_FORMAT(x.REQUESTED_AT, "%1$s")
+                      ORDER BY x.REQUESTED_AT;
+                    ',
+                    /** 1 */ '%d.%m %k',
+                    /** 2 */ $column['field'],
+                    /** 3 */ $column['table'],
+                    /** 4 */ $startDate->format('Y-m-d H:i:s'),
+                    /** 5 */ $endDate->format('Y-m-d H:i:s')
+                );
+            }
 
             /**
              * @var PDOStatement $stmt
@@ -184,20 +211,37 @@ class GraphController extends CController
      */
     private function getLabels(\DateTime $startDate, \DateTime $endDate, $groupBy)
     {
-        $sql = sprintf(
-            '
-              SELECT
+        $grouping = $this->getGroupBy($groupBy);
+
+        if ($groupBy !== '%d.%m %k') {
+            $sql = sprintf(
+                '
+              SELECT DISTINCT
                 DATE_FORMAT(T.FULLDATE, "%1$s") AS label
               FROM
                 TIME_DIMENSION T 
               WHERE
                 T.FULLDATE BETWEEN "%2$s" AND "%3$s"
-              GROUP BY T.YEAR, T.MONTH_NUMBER
+              GROUP BY %4$s
+              ORDER BY T.FULLDATE;
             ',
-            /** 1 */ $groupBy,
-            /** 2 */ $startDate->format('Y-m-d'),
-            /** 3 */ $endDate->format('Y-m-d')
-        );
+                /** 1 */ $groupBy,
+                /** 2 */ $startDate->format('Y-m-d'),
+                /** 3 */ $endDate->format('Y-m-d'),
+                /** 4 */ $grouping
+            );
+        } else {
+            $labels = [];
+
+            $date = clone $startDate;
+
+            while ($date->getTimestamp() < $endDate->getTimestamp()) {
+                $labels[] = $date->format('d.m H:00');
+                $date->add(\DateInterval::createFromDateString('1 hour'));
+            }
+
+            return $labels;
+        }
 
         /**
          * @var PDOStatement $stmt
@@ -209,5 +253,31 @@ class GraphController extends CController
         $stmt = null;
 
         return $data;
+    }
+
+    /**
+     * Determines the used group by criteria.
+     *
+     * @param  string $groupBy
+     *
+     * @return string
+     */
+    private function getGroupBy($groupBy)
+    {
+        $grouping = 'T.YEAR';
+
+        switch ($groupBy) {
+            case '%m/%Y':
+                $grouping .= ', T.MONTH_NUMBER';
+                break;
+            case '%x/%v':
+                $grouping .= ', T.WEEK_NUMBER';
+                break;
+            case '%d.%m':
+                $grouping .= ', T.DAY_OF_YEAR';
+                break;
+        }
+
+        return $grouping;
     }
 }

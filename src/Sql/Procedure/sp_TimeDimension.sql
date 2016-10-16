@@ -16,6 +16,7 @@ BEGIN
     DAY_NAME        VARCHAR(12),
     MONTH_NUMBER    INT,
     MONTH_NAME      VARCHAR(12),
+    WEEK_NUMBER     INT,
     YEAR            INT,
     QUARTER         TINYINT,
     PRIMARY KEY(ID)
@@ -32,6 +33,7 @@ BEGIN
         DAY_NAME ,
         MONTH_NUMBER,
         MONTH_NAME,
+        WEEK_NUMBER,
         YEAR,
         QUARTER
     ) VALUES (
@@ -42,6 +44,7 @@ BEGIN
         DAYNAME(startDate),
         MONTH(startDate),
         MONTHNAME(startDate),
+        WEEK(startDate),
         YEAR(startDate),
         QUARTER(startDate)
     );
