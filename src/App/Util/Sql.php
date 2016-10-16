@@ -30,6 +30,15 @@ class Sql
     const DB_TYPE_AUTO = 'INT(12) AUTO_INCREMENT PRIMARY KEY';
 
     /**
+     * Constants for date formats.
+     */
+    const DATE_FORMAT_HOUR = '%d.%m %k';
+    const DATE_FORMAT_DAY = '%d.%m';
+    const DATE_FORMAT_WEEK = '%x/%v';
+    const DATE_FORMAT_MONTH = '%m/%Y';
+    const DATE_FORMAT_YEAR = '%Y';
+
+    /**
      * The database type mappings.
      *
      * @var array
