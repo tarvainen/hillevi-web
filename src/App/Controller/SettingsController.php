@@ -113,7 +113,7 @@ class SettingsController extends CController
      */
     public function saveSearchSettingsAction($action, Request $request)
     {
-        list($name, $settings, $id) = $this->mapFromRequest(['name', 'settings', 'id']);
+        list($name, $settings, $id) = $this->mapFromRequest(['name', 'setting', 'id']);
 
         if (!is_null($id)) {
             $setting = $this
@@ -141,5 +141,39 @@ class SettingsController extends CController
         $data['setting'] = Json::decode($data['setting']);
 
         return new JsonResponse($data);
+    }
+
+    /**
+     * Action for removing saved settings.
+     *
+     * @Route("search/{action}/delete")
+     * @Method("POST")
+     *
+     * @param string  $action
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function removeSavedSettingsAction($action, Request $request)
+    {
+        $settings = $request->get('settings', []);
+
+        $settingObjects = $this
+            ->manager()
+            ->getRepository('App:SearchSetting')
+            ->findBy(
+                [
+                    'user' => $this->getUserEntity()->getId(),
+                    'id' => $settings
+                ]
+            );
+
+        foreach ($settingObjects as $settingObject) {
+            $this->manager()->remove($settingObject);
+        }
+
+        $this->manager()->flush();
+
+        return new JsonResponse('OK');
     }
 }
