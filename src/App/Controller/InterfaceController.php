@@ -271,12 +271,18 @@ class InterfaceController extends CController
         /**
          * @var ApiReader $api
          */
-        $api = $em->find('App:ApiReader', $id);
+        $api = $em->getRepository('App:ApiReader')->findOneBy(
+            [
+                'id' => (int)$id,
+                'owner' => $this->getUserEntity()->getId()
+            ]
+        );
 
         $sql = sprintf(
             '
               SELECT *
-              FROM %1$s
+              FROM %1$s x
+              ORDER BY x.REQUESTED_AT
             ',
             /** 1 */ $api->getTableName()
         );
@@ -367,6 +373,70 @@ class InterfaceController extends CController
     }
 
     /**
+     * A route for adding api rows.
+     *
+     * @Permission("interface:create")
+     *
+     * @Route("data/rows/add")
+     * @Method("POST")
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function addRowAction(Request $request)
+    {
+        list($apiId, $data) = $this->mapFromRequest(['api', 'data']);
+
+        /**
+         * @var ApiReader $api
+         */
+        $api = $this
+            ->manager()
+            ->getRepository('App:ApiReader')
+            ->findOneBy(
+                [
+                    'id' => $apiId,
+                    'owner' => $this->getUserEntity()->getId()
+                ]
+            );
+
+        if (!$api) {
+            throw new ActionFailedException('save');
+        }
+
+        $values = $this->validateSavedRowForSchema($api->getColumns(), $data);
+        $values['REQUESTED_AT'] = date('Y-m-d H:i:s');
+
+        $parametrize = function ($key) {
+            return ':' . $key;
+        };
+
+        $sql = sprintf(
+            '
+              INSERT INTO %1$s (%2$s) VALUES (%3$s);
+            ',
+            /** 1 */ $api->getTableName(),
+            /** 2 */ implode(',', array_keys($values)),
+            /** 3 */ implode(',', array_map($parametrize, array_keys($values)))
+        );
+
+        $bindings = [];
+
+        foreach ($values as $key => $value) {
+            $bindings[':' . $key] = $value;
+        }
+
+        /**
+         * @var PDOStatement $stmt
+         */
+        $stmt = $this->getDoctrine()->getConnection()->prepare($sql);
+        $data = $stmt->execute($bindings);
+
+        return new JsonResponse('OK');
+    }
+
+    /**
      * Updates the table's columns using the old column array and the new column array
      * as reference to check if there is some changes.
      *
@@ -410,14 +480,14 @@ class InterfaceController extends CController
         foreach ($removedColumns as $uniqid => $column) {
             $alterSqls[] = sprintf(
                 'DROP COLUMN %1$s',
-                /** 1 */ $column['field']
+                /** 1 */ FieldFormatter::toTableNameFormat($column['field'])
             );
         }
 
         foreach ($addedColumns as $uniqid => $column) {
             $alterSqls[] = sprintf(
                 'ADD COLUMN %1$s %2$s',
-                /** 1 */ $column['field'],
+                /** 1 */ FieldFormatter::toTableNameFormat($column['field']),
                 /** 2 */ Sql::$dbTypes[$column['type']]
             );
         }
@@ -425,8 +495,8 @@ class InterfaceController extends CController
         foreach ($changedColumns as $uniqid => $column) {
             $alterSqls[] = sprintf(
                 'CHANGE %1$s %2$s %3$s',
-                /** 1 */ $column['oldField'],
-                /** 2 */ $column['field'],
+                /** 1 */ FieldFormatter::toTableNameFormat($column['oldField']),
+                /** 2 */ FieldFormatter::toTableNameFormat($column['field']),
                 /** 3 */ Sql::$dbTypes[$column['type']]
             );
         }
@@ -442,5 +512,27 @@ class InterfaceController extends CController
         );
 
         $this->getDoctrine()->getConnection()->query($sql);
+    }
+
+    /**
+     * Validates the data pushed to the database so there won't be any harmful content.
+     *
+     * @param array $schema
+     * @param array $row
+     *
+     * @return array
+     */
+    private function validateSavedRowForSchema(array $schema, array $row)
+    {
+        $result = [];
+
+        foreach ($row as $key => $value) {
+            if (array_key_exists($key, $schema)) {
+                $field = FieldFormatter::toTableNameFormat($schema[$key]['field']);
+                $result[$field] = FieldFormatter::format($value, $schema[$key]['type']);
+            }
+        }
+
+        return $result;
     }
 }

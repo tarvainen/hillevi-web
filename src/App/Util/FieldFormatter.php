@@ -44,6 +44,6 @@ class FieldFormatter
      */
     public static function toTableNameFormat($val)
     {
-        return strtolower(preg_replace('/[^A-Za-z_]/', '', $val));
+        return preg_replace('/[^A-Za-z_]/', '', $val);
     }
 }

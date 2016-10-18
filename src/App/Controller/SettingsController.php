@@ -138,6 +138,7 @@ class SettingsController extends CController
         }
 
         $data = $this->serializer->toArray($setting);
+        $data['user'] = null;
         $data['setting'] = Json::decode($data['setting']);
 
         return new JsonResponse($data);
