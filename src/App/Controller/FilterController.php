@@ -64,6 +64,91 @@ class FilterController extends CController
     }
 
     /**
+     * A route for fetching date range preselect options for date range selection.
+     *
+     * @Permission
+     *
+     * @Route("date/ranges")
+     * @Method("POST")
+     *
+     * @return JsonResponse
+     */
+    public function getDateRangePreSelectsAction()
+    {
+        $ranges = [
+            [
+                'id' => 1,
+                'name' => 'RANGE_TODAY',
+                'start' => date('Y-m-d') . ' 00:00:00',
+                'end' => date('Y-m-d') . ' 23:59:59'
+            ]
+        ];
+
+        $start = new \DateTime('yesterday');
+        $end = new \DateTime('yesterday');
+
+        $ranges[] = [
+            'id' => 2,
+            'name' => 'RANGE_YESTERDAY',
+            'start' => $start->format('Y-m-d') . ' 00:00:00',
+            'end' => $end->format('Y-m-d') . ' 23:59:59'
+        ];
+
+        $start = new \DateTime('last monday');
+        $end = new \DateTime('next sunday');
+
+        $ranges[] = [
+            'id' => 3,
+            'name' => 'RANGE_THIS_WEEK',
+            'start' => $start->format('Y-m-d') . ' 00:00:00',
+            'end' => $end->format('Y-m-d') . ' 23:59:59'
+        ];
+
+        $ranges[] = [
+            'id' => 4,
+            'name' => 'RANGE_LAST_WEEK',
+            'start' => date('Y-m-d', strtotime('last monday - 7 days')) . ' 00:00:00',
+            'end' => date('Y-m-d', strtotime('next sunday - 7 days')) . ' 23:59:59'
+        ];
+
+        $start = new \DateTime('first day of this month');
+        $end = new \DateTime('last day of this month');
+
+        $ranges[] = [
+            'id' => 5,
+            'name' => 'RANGE_THIS_MONTH',
+            'start' => $start->format('Y-m-d') . ' 00:00:00',
+            'end' => $end->format('Y-m-d') . ' 23:59:59'
+        ];
+
+        $start = new \DateTime('first day of last month');
+        $end = new \DateTime('last day of last month');
+
+        $ranges[] = [
+            'id' => 6,
+            'name' => 'RANGE_LAST_MONTH',
+            'start' => $start->format('Y-m-d') . ' 00:00:00',
+            'end' => $end->format('Y-m-d') . ' 23:59:59'
+        ];
+
+        $ranges[] = [
+            'id' => 7,
+            'name' => 'RANGE_CURRENT_YEAR',
+            'start' => date('Y-m-d', strtotime('first day of January ' . date('Y'))) . ' 00:00:00',
+            'end' => date('Y-m-d', strtotime('last day of December ' . date('Y'))) . ' 23:59:59'
+        ];
+
+        $ranges[] = [
+            'id' => 8,
+            'name' => 'RANGE_LAST_YEAR',
+            'start' => date('Y-m-d', strtotime('first day of January ' . ((int)date('Y') - 1))) . ' 00:00:00',
+            'end' => date('Y-m-d', strtotime('last day of December ' . ((int)date('Y') - 1))) . ' 23:59:59'
+        ];
+
+        return new JsonResponse($ranges);
+    }
+
+    /**
      * Action for fetching chart types for filters.
      *
      * @Permission
