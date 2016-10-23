@@ -165,7 +165,7 @@ class GraphController extends CController
              */
             $stmt = $conn->query($sql);
 
-            $result[] = $this->formatData($labels, $stmt->fetchAll(\PDO::FETCH_ASSOC));
+            $result[] = $this->formatData($labels, $stmt->fetchAll(\PDO::FETCH_ASSOC), $column['field']);
 
             $series[] = sprintf(
                 '%1$s (%2$s::%3$s)',
@@ -188,12 +188,13 @@ class GraphController extends CController
     /**
      * Format the data so there will be data for every single date value.
      *
-     * @param array $labels
-     * @param array $data
+     * @param array  $labels
+     * @param array  $data
+     * @param string $fieldName
      *
      * @return array
      */
-    private function formatData($labels, $data)
+    private function formatData($labels, $data, $fieldName)
     {
         $result = [];
 
@@ -202,7 +203,7 @@ class GraphController extends CController
         }
 
         foreach ($data as $row) {
-            $result[$row['label']] = $row['value'];
+            $result[$row['label']] = $row[$fieldName];
         }
 
         return array_values($result);

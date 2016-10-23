@@ -42,6 +42,8 @@ class InterfaceFixture extends AbstractFixture implements OrderedFixtureInterfac
             ])
             ->setOwner($this->getReference('admin-user'));
 
+        $api->refreshToken();
+
         $manager->persist($api);
         $manager->flush();
     }
