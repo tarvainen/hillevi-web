@@ -30,6 +30,14 @@ class FieldFormatter
                 return (int)$data;
             case FieldType::DECIMAL:
                 return round((float)$data, 2);
+            case FieldType::DATETIME:
+                $dateTime = \DateTime::createFromFormat('Y-m-d H:i:s', $data);
+
+                if ($dateTime !== false) {
+                    return $data;
+                }
+
+                return date('Y-m-d H:i:s');
             default:
                 return null;
         }

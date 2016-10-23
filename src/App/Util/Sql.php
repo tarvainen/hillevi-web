@@ -17,7 +17,7 @@ class Sql
     const TYPE_INT = 'int';
     const TYPE_STRING = 'string';
     const TYPE_DECIMAL = 'decimal';
-    const TYPE_DATETIME = 'date';
+    const TYPE_DATETIME = 'datetime';
     const TYPE_AUTO = 'auto';
 
     /**
@@ -71,5 +71,40 @@ class Sql
             /** 1 */ FieldFormatter::toTableNameFormat($title),
             /** 2 */ self::$dbTypes[$type]
         );
+    }
+
+    /**
+     * Creates a simple insert statement from parameters.
+     *
+     * @param array  $data
+     * @param string $table
+     * @param array  $columns
+     * @param int    $index
+     *
+     * @return array
+     */
+    public static function insert(array $data, $table, $columns, $index = 0)
+    {
+        $values = [];
+        $bindings = [];
+
+        foreach ($columns as $key => $value) {
+            if (array_key_exists($value['field'], $data)) {
+                $values[$value['field']] = FieldFormatter::format($data[$value['field']], $value['type']);
+            }
+        }
+
+        foreach ($values as $key => $value) {
+            $bindings[':' . $key . $index] = $value;
+        }
+
+        $sql = sprintf(
+            'INSERT INTO %1$s (%2$s) VALUES(%3$s);',
+            /** 1 */ $table,
+            /** 2 */ implode(',', array_keys($values)),
+            /** 3 */ implode(',', array_keys($bindings))
+        );
+
+        return [$sql, $bindings];
     }
 }

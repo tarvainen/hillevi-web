@@ -109,6 +109,16 @@ class ApiReader extends EntityBase
     private $interval = 3600;
 
     /**
+     * The token for this api. This is needed in the data imports.
+     *
+     * @var string
+     *
+     * @ORM\Column(name="token", type="string")
+     * @Type("string")
+     */
+    private $token;
+
+    /**
      * Get id
      *
      * @return int
@@ -360,5 +370,28 @@ class ApiReader extends EntityBase
     public function getLastRun()
     {
         return $this->lastRun;
+    }
+
+    /**
+     * Regenerates the token for this api.
+     *
+     * @return string
+     */
+    public function refreshToken()
+    {
+        $token = md5($this->getTableName() . $this->getId() . microtime());
+        $this->token = $token;
+
+        return $token;
+    }
+
+    /**
+     * Get token.
+     *
+     * @return string
+     */
+    public function getToken()
+    {
+        return $this->token;
     }
 }

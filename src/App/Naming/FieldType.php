@@ -11,7 +11,8 @@ namespace App\Naming;
  */
 class FieldType
 {
-    const INTEGER  = 'int';
-    const STRING   = 'string';
-    const DECIMAL  = 'decimal';
+    const INTEGER    = 'int';
+    const STRING     = 'string';
+    const DECIMAL    = 'decimal';
+    const DATETIME   = 'datetime';
 }

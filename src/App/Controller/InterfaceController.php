@@ -15,8 +15,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\HttpException;
 use App\Annotation\Permission;
 
 /**
@@ -81,6 +79,7 @@ class InterfaceController extends CController
         $api->fromArray($data);
 
         $api->setOwner($this->getUserEntity());
+        $api->refreshToken();
 
         $demoColumn = [
             md5(microtime()) => [
@@ -99,6 +98,12 @@ class InterfaceController extends CController
 
         $em->persist($api);
 
+        $em->flush();
+
+        if (!$em->contains($api)) {
+            throw new ActionFailedException('save');
+        }
+
         // The API's table creation SQL
         $sql = sprintf(
             '
@@ -116,12 +121,6 @@ class InterfaceController extends CController
         ;
 
         $this->updateInterfaceColumns($api->getTableName(), [], $demoColumn);
-
-        $em->flush();
-
-        if (!$em->contains($api)) {
-            throw new ActionFailedException('save');
-        }
 
         return new JsonResponse('OK');
     }
@@ -225,7 +224,8 @@ class InterfaceController extends CController
         $types = [
             FieldType::INTEGER,
             FieldType::DECIMAL,
-            FieldType::STRING
+            FieldType::STRING,
+            FieldType::DATETIME
         ];
 
         return new JsonResponse($types);
