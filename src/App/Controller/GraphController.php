@@ -6,6 +6,7 @@ use App\Entity\ApiReader;
 use App\Exception\ActionFailedException;
 use App\Util\Arrays;
 use App\Util\Json;
+use App\Util\Sql;
 use Doctrine\DBAL\Driver\PDOStatement;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -57,7 +58,8 @@ class GraphController extends CController
                         'name' => $col['name'],
                         'api' => $item->getName(),
                         'table' => $item->getTableName(),
-                        'field' => $col['field']
+                        'field' => $col['field'],
+                        'aggregate' => isset($col['aggregate']) ? $col['aggregate'] : Sql::AGGREGATE_SUM
                     ];
                 }
             }
@@ -137,40 +139,42 @@ class GraphController extends CController
                     '
                   SELECT
                     DATE_FORMAT(T.FULLDATE, "%1$s") AS label,
-                    SUM(x.%2$s) AS %2$s
+                    %2$s(x.%3$s) AS %3$s
                   FROM
                     TIME_DIMENSION T
-                  CROSS JOIN %3$s x ON DATE(x.REQUESTED_AT) = T.FULLDATE 
+                  CROSS JOIN %4$s x ON DATE(x.REQUESTED_AT) = T.FULLDATE 
                   WHERE
-                    T.FULLDATE BETWEEN "%4$s" AND "%5$s"
-                  GROUP BY %6$s
+                    T.FULLDATE BETWEEN "%5$s" AND "%6$s"
+                  GROUP BY %7$s
                   ORDER BY T.FULLDATE;
                 ',
                     /** 1 */ $groupBy,
-                    /** 2 */ $column['field'],
-                    /** 3 */ $column['table'],
-                    /** 4 */ $startDate->format('Y-m-d'),
-                    /** 5 */ $endDate->format('Y-m-d'),
-                    /** 6 */ $grouping
+                    /** 2 */ Sql::$aggregates[$column['aggregate']],
+                    /** 3 */ $column['field'],
+                    /** 4 */ $column['table'],
+                    /** 5 */ $startDate->format('Y-m-d'),
+                    /** 6 */ $endDate->format('Y-m-d'),
+                    /** 7 */ $grouping
                 );
             } else {
                 $sql = sprintf(
                     '
                       SELECT
                         DATE_FORMAT(x.REQUESTED_AT, "%1$s:00") AS label,
-                        SUM(x.%2$s) AS %2$s
+                        %2$s(x.%3$s) AS %3$s
                       FROM
-                        %3$s x
+                        %4$s x
                       WHERE
-                        x.REQUESTED_AT BETWEEN "%4$s" AND "%5$s"
+                        x.REQUESTED_AT BETWEEN "%5$s" AND "%6$s"
                       GROUP BY DATE_FORMAT(x.REQUESTED_AT, "%1$s")
                       ORDER BY x.REQUESTED_AT;
                     ',
                     /** 1 */ '%d.%m %H',
-                    /** 2 */ $column['field'],
-                    /** 3 */ $column['table'],
-                    /** 4 */ $startDate->format('Y-m-d H:i:s'),
-                    /** 5 */ $endDate->format('Y-m-d H:i:s')
+                    /** 2 */ Sql::$aggregates[$column['aggregate']],
+                    /** 3 */ $column['field'],
+                    /** 4 */ $column['table'],
+                    /** 5 */ $startDate->format('Y-m-d H:i:s'),
+                    /** 6 */ $endDate->format('Y-m-d H:i:s')
                 );
             }
 
@@ -182,10 +186,11 @@ class GraphController extends CController
             $result[] = $this->formatData($labels, $stmt->fetchAll(\PDO::FETCH_ASSOC), $column['field']);
 
             $series[] = sprintf(
-                '%1$s (%2$s::%3$s)',
+                '%1$s (%2$s::%3$s)[%4$s]',
                 /** 1 */ $column['name'],
                 /** 2 */ $column['api'],
-                /** 3 */ $column['field']
+                /** 3 */ $column['field'],
+                /** 4 */ Sql::$aggregates[$column['aggregate']]
             );
 
             $stmt->closeCursor();

@@ -6,8 +6,8 @@ namespace App\Util;
  * The utility class to handle different sql operations.
  *
  * @package App\Util
- *          
- * @author Atte Tarvainen <atte.tarvainen@pp1.inet.fi>
+ *
+ * @author  Atte Tarvainen <atte.tarvainen@pp1.inet.fi>
  */
 class Sql
 {
@@ -41,29 +41,37 @@ class Sql
     /**
      * Constants for aggregate functions.
      */
-    const AGGREGATE_SUM     = 0;
+    const AGGREGATE_SUM = 0;
     const AGGREGATE_AVERAGE = 1;
-    const AGGREGATE_COUNT   = 2;
-    const AGGREGATE_MIN     = 3;
-    const AGGREGATE_MAX     = 4;
+    const AGGREGATE_COUNT = 2;
+    const AGGREGATE_MIN = 3;
+    const AGGREGATE_MAX = 4;
 
     /**
      * The database type mappings.
      *
      * @var array
      */
-    public static $dbTypes = array(
+    public static $dbTypes = [
         self::TYPE_INT      => self::DB_TYPE_INT,
         self::TYPE_STRING   => self::DB_TYPE_STRING,
         self::TYPE_DECIMAL  => self::DB_TYPE_DECIMAL,
         self::TYPE_DATETIME => self::DB_TYPE_DATETIME
-    );
+    ];
+
+    public static $aggregates = [
+        self::AGGREGATE_SUM     => 'SUM',
+        self::AGGREGATE_AVERAGE => 'AVG',
+        self::AGGREGATE_COUNT   => 'COUNT',
+        self::AGGREGATE_MIN     => 'MIN',
+        self::AGGREGATE_MAX     => 'MAX'
+    ];
 
     /**
      * Forms a create sql for the single database table column.
      *
-     * @param string     $title
-     * @param string     $type
+     * @param string $title
+     * @param string $type
      *
      * @return null|string
      */
@@ -77,8 +85,10 @@ class Sql
             '
                 %1$s %2$s
             ',
-            /** 1 */ FieldFormatter::toTableNameFormat($title),
-            /** 2 */ self::$dbTypes[$type]
+            /** 1 */
+            FieldFormatter::toTableNameFormat($title),
+            /** 2 */
+            self::$dbTypes[$type]
         );
     }
 
@@ -109,9 +119,12 @@ class Sql
 
         $sql = sprintf(
             'INSERT INTO %1$s (%2$s) VALUES(%3$s);',
-            /** 1 */ $table,
-            /** 2 */ implode(',', array_keys($values)),
-            /** 3 */ implode(',', array_keys($bindings))
+            /** 1 */
+            $table,
+            /** 2 */
+            implode(',', array_keys($values)),
+            /** 3 */
+            implode(',', array_keys($bindings))
         );
 
         return [$sql, $bindings];
