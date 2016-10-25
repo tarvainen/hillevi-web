@@ -1,5 +1,7 @@
 <?php
 
+date_default_timezone_set('Europe/Helsinki');
+
 use Symfony\Component\HttpFoundation\Request;
 
 /**

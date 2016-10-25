@@ -152,7 +152,7 @@ class GraphController extends CController
                       GROUP BY DATE_FORMAT(x.REQUESTED_AT, "%1$s")
                       ORDER BY x.REQUESTED_AT;
                     ',
-                    /** 1 */ '%d.%m %k',
+                    /** 1 */ '%d.%m %H',
                     /** 2 */ $column['field'],
                     /** 3 */ $column['table'],
                     /** 4 */ $startDate->format('Y-m-d H:i:s'),
