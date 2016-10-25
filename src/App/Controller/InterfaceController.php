@@ -67,7 +67,7 @@ class InterfaceController extends CController
      */
     public function addInterfaceAction(Request $request)
     {
-        $data = $this->mapHashFromRequest(['name', ' type', 'url', 'type', 'interval', 'aggregate']);
+        $data = $this->mapHashFromRequest(['name', ' type', 'url', 'type', 'interval', 'aggregate', 'unit']);
 
         $data['tableName'] = FieldFormatter::toTableNameFormat(
             'user_' . $this->getUserEntity()->getUsername() . '_def_' . $data['name']
@@ -87,6 +87,7 @@ class InterfaceController extends CController
                 'field' => 'value',
                 'type' => FieldType::INTEGER,
                 'aggregate' => Sql::AGGREGATE_SUM,
+                'unit' => 'kpl',
             ]
         ];
 
@@ -194,7 +195,7 @@ class InterfaceController extends CController
         // The old columns
         $columns = $api->getColumns();
 
-        $data = $this->mapHashFromRequest(['name', 'type', 'url', 'columns', 'interval', 'aggregate']);
+        $data = $this->mapHashFromRequest(['name', 'type', 'url', 'columns', 'interval', 'aggregate', 'unit']);
         $api->fromArray($data);
 
         /**

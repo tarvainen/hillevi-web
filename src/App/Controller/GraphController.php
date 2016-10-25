@@ -54,13 +54,27 @@ class GraphController extends CController
 
             foreach ($apiColumns as $col) {
                 if (in_array($col['type'], ['int', 'decimal'])) {
-                    $columns[] =[
+                    $column = [
                         'name' => $col['name'],
                         'api' => $item->getName(),
                         'table' => $item->getTableName(),
                         'field' => $col['field'],
+                        'unit' => isset($col['unit']) ? $col['unit'] : '',
                         'aggregate' => isset($col['aggregate']) ? $col['aggregate'] : Sql::AGGREGATE_SUM
                     ];
+
+                    // Format the proper display name for the column
+                    $displayName = sprintf(
+                        '%1$s (%2$s::%3$s) [%4$s]',
+                        /** 1 */ $column['name'],
+                        /** 2 */ $column['api'],
+                        /** 3 */ $column['field'],
+                        /** 4 */ Sql::$aggregates[$column['aggregate']]
+                    );
+
+                    $column['displayName'] = $displayName;
+
+                    $columns[] = $column;
                 }
             }
         }
@@ -186,11 +200,12 @@ class GraphController extends CController
             $result[] = $this->formatData($labels, $stmt->fetchAll(\PDO::FETCH_ASSOC), $column['field']);
 
             $series[] = sprintf(
-                '%1$s (%2$s::%3$s)[%4$s]',
+                '%1$s (%2$s::%3$s)[%4$s] %5$s',
                 /** 1 */ $column['name'],
                 /** 2 */ $column['api'],
                 /** 3 */ $column['field'],
-                /** 4 */ Sql::$aggregates[$column['aggregate']]
+                /** 4 */ Sql::$aggregates[$column['aggregate']],
+                /** 5 */ $column['unit'] ? '(' . $column['unit'] . ')' : ''
             );
 
             $stmt->closeCursor();
