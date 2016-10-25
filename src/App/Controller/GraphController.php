@@ -153,7 +153,7 @@ class GraphController extends CController
                     '
                   SELECT
                     DATE_FORMAT(T.FULLDATE, "%1$s") AS label,
-                    %2$s(x.%3$s) AS %3$s
+                    ROUND(%2$s(x.%3$s), 2) AS %3$s
                   FROM
                     TIME_DIMENSION T
                   CROSS JOIN %4$s x ON DATE(x.REQUESTED_AT) = T.FULLDATE 
@@ -175,7 +175,7 @@ class GraphController extends CController
                     '
                       SELECT
                         DATE_FORMAT(x.REQUESTED_AT, "%1$s:00") AS label,
-                        %2$s(x.%3$s) AS %3$s
+                        ROUND(%2$s(x.%3$s), 2) AS %3$s
                       FROM
                         %4$s x
                       WHERE
