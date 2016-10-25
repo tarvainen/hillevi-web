@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\ApiReader;
 use App\Exception\ActionFailedException;
+use App\Util\Arrays;
 use App\Util\Json;
 use Doctrine\DBAL\Driver\PDOStatement;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -87,6 +88,19 @@ class GraphController extends CController
 
         foreach ($columns as &$column) {
             $column = Json::decode($column);
+        }
+
+        // Check that current user has rights to all of the defined columns
+        $api = $this->manager()->getRepository('App:ApiReader')
+            ->findOneBy(
+                [
+                    'table' => Arrays::map($columns, 'table'),
+                    'owner' => $this->getUserEntity()->getId()
+                ]
+            );
+
+        if (!$api) {
+            throw new ActionFailedException('GetData');
         }
 
         $start = new \DateTime($startDate);
