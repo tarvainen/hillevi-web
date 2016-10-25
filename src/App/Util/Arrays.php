@@ -32,4 +32,29 @@ class Arrays
 
         return false;
     }
+
+    /**
+     * Map values by key out of the array.
+     *
+     * @param array  $array
+     * @param string $key
+     *
+     * @return array
+     */
+    public static function map(array $array, $key)
+    {
+        if (!$key || empty($array)) {
+            return [];
+        }
+
+        $result = [];
+
+        foreach ($array as $item) {
+            if (isset($item[$key])) {
+                $result[] = $item[$key];
+            }
+        }
+
+        return $result;
+    }
 }

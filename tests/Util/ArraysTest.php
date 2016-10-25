@@ -33,6 +33,19 @@ class ArraysTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test that the array map function maps the right values.
+     *
+     * @param array $a
+     * @param array $expected
+     *
+     * @dataProvider providerArrayMapData
+     */
+    public function testArrayMapReturnsRightValues($a, $expected)
+    {
+        $this->assertEquals(Arrays::map($a, 'id'), $expected);
+    }
+
+    /**
      * Data provider for the password mismatch test.
      *
      * @return array
@@ -80,6 +93,39 @@ class ArraysTest extends \PHPUnit_Framework_TestCase
             ['random stuff' => true],
             ['random > 5' => false],
             [0],
+        ];
+    }
+
+    /**
+     * Provide data for the array map test.
+     *
+     * @return array
+     */
+    public function providerArrayMapData()
+    {
+        return [
+            [
+                [],
+                []
+            ],
+            [
+                [
+                    [
+                        'id' => 1,
+                    ],
+                    [
+                        'id' => 2,
+                    ],
+                    [
+                        'id' => 3,
+                    ],
+                ],
+                [1, 2, 3]
+            ],
+            [
+                [['id' => 1, 'i' => 2]],
+                [1]
+            ],
         ];
     }
 }
