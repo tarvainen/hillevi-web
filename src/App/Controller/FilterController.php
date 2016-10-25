@@ -182,6 +182,44 @@ class FilterController extends CController
     }
 
     /**
+     * Action for fetching aggregate method options.
+     *
+     * @Permission
+     *
+     * @Route("aggregates")
+     * @Method("POST")
+     *
+     * @return JsonResponse
+     */
+    public function getAggregateMethodsAction()
+    {
+        $result = [
+            [
+                'id' => Sql::AGGREGATE_SUM,
+                'name' => 'AGGREGATE_SUM',
+            ],
+            [
+                'id' => Sql::AGGREGATE_AVERAGE,
+                'name' => 'AGGREGATE_AVERAGE',
+            ],
+            [
+                'id' => Sql::AGGREGATE_COUNT,
+                'name' => 'AGGREGATE_COUNT',
+            ],
+            [
+                'id' => Sql::AGGREGATE_MAX,
+                'name' => 'AGGREGATE_MAX',
+            ],
+            [
+                'id' => Sql::AGGREGATE_MIN,
+                'name' => 'AGGREGATE_MIN',
+            ]
+        ];
+
+        return new JsonResponse($result);
+    }
+
+    /**
      * Action for fetching saved search settings for trend chart.
      *
      * @Permission

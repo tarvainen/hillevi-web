@@ -39,6 +39,15 @@ class Sql
     const DATE_FORMAT_YEAR = '%Y';
 
     /**
+     * Constants for aggregate functions.
+     */
+    const AGGREGATE_SUM     = 0;
+    const AGGREGATE_AVERAGE = 1;
+    const AGGREGATE_COUNT   = 2;
+    const AGGREGATE_MIN     = 3;
+    const AGGREGATE_MAX     = 4;
+
+    /**
      * The database type mappings.
      *
      * @var array
