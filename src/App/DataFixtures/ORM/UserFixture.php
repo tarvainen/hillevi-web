@@ -34,6 +34,7 @@ class UserFixture extends AbstractFixture implements OrderedFixtureInterface
         $admin->setFirstname('Administrator');
         $admin->setLastname('Admin');
         $admin->setSettings(new Settings());
+        $admin->refreshApiKey();
 
         $settings = new Settings();
         $manager->persist($settings);
