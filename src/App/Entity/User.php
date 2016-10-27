@@ -106,6 +106,15 @@ class User extends EntityBase
      */
     private $settings;
 
+    /**
+     * Plugin api key
+     *
+     * @var string
+     *
+     * @ORM\Column(name="apiKey", type="string", length=255)
+     */
+    private $apiKey;
+
     public function __construct()
     {
         $this->rights = new ArrayCollection();
@@ -357,6 +366,28 @@ class User extends EntityBase
     public function getSearchSettings()
     {
         return $this->searchSettings;
+    }
+
+    /**
+     * Set api key.
+     *
+     * @return User
+     */
+    public function refreshApiKey()
+    {
+        $this->apiKey = md5($this->getEmail() . microtime() . $this->getUsername());
+
+        return $this;
+    }
+
+    /**
+     * Get search settings.
+     *
+     * @return string
+     */
+    public function getApiKey()
+    {
+        return $this->apiKey;
     }
 
     /**

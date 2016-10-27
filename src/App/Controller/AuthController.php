@@ -44,7 +44,7 @@ class AuthController extends CController
 
         $query = $em->createQueryBuilder()
             ->from('App:User', 'u')
-            ->select(array('partial u.{id, firstname, lastname, username, email}'))
+            ->select(array('partial u.{id, firstname, lastname, username, email, apiKey}'))
             ->where('u.id = ' . $this->getUser()['uid'])
             ->setMaxResults(1)
             ->getQuery();
@@ -206,6 +206,11 @@ class AuthController extends CController
             $token = $jws->getTokenString();
 
             $user->setToken($token);
+
+            if (empty($user->getApiKey())) {
+                $user->refreshApiKey();
+            }
+
             $em->persist($user);
             $em->flush();
 
