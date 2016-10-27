@@ -5,6 +5,8 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Exception\UnauthorizedException;
 use App\Util\FS;
+use JMS\Serializer\Naming\IdenticalPropertyNamingStrategy;
+use JMS\Serializer\Naming\SerializedNameAnnotationStrategy;
 use JMS\Serializer\SerializerBuilder;
 use Namshi\JOSE\SimpleJWS;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -46,7 +48,9 @@ class CController extends Controller
      */
     public function __construct()
     {
-        $this->serializer = SerializerBuilder::create()->build();
+        $this->serializer = SerializerBuilder::create()
+            ->setPropertyNamingStrategy(new SerializedNameAnnotationStrategy(new IdenticalPropertyNamingStrategy()))
+            ->build();
     }
 
     /**
