@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\ActiveApplication;
 use App\Entity\KeyCombo;
 use App\Entity\KeyStroke;
 use App\Entity\MouseClick;
@@ -126,6 +127,21 @@ class PCInspectorController extends CController
                 $this->manager()->persist($mouseClick);
             }
 
+            // Create active application entities
+            foreach ($item['activeWindows'] as $window => $activeTime) {
+                $activeApplication = $this->createActiveApplicationEntity(
+                    [
+                        'app' => $window,
+                        'activeTime' => $activeTime
+                    ],
+                    $user,
+                    $startDateTime,
+                    $endDateTime
+                );
+
+                $this->manager()->persist($activeApplication);
+            }
+
             $this->manager()->persist($mousePosition);
         }
 
@@ -242,5 +258,31 @@ class PCInspectorController extends CController
         ;
 
         return $mouseClick;
+    }
+
+    /**
+     * Creates a active application entity.
+     *
+     * @param array     $data
+     * @param User      $user
+     * @param \DateTime $start
+     * @param \DateTime $end
+     *
+     * @return ActiveApplication
+     */
+    private function createActiveApplicationEntity($data, User $user, \DateTime $start, \DateTime $end)
+    {
+        $activeApplication = new ActiveApplication();
+
+        $activeApplication
+            ->setName($data['app'])
+            ->setActiveTime((int)$data['activeTime'])
+            ->setStartTime($start)
+            ->setEndTime($end)
+            ->setRequestedAt(new \DateTime())
+            ->setUser($user)
+        ;
+
+        return $activeApplication;
     }
 }
