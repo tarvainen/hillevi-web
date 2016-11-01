@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\KeyCombo;
 use App\Entity\KeyStroke;
+use App\Entity\MousePosition;
 use App\Entity\User;
 use App\Exception\ActionFailedException;
 use App\Util\Json;
@@ -86,6 +87,8 @@ class PCInspectorController extends CController
             // Pre-format data and validate that we don't use something which is not set
             $item['keys'] = array_map('intval', isset($item['keys']) ? $item['keys'] : []);
             $item['keyCombos'] = isset($item['keyCombos']) ? $item['keyCombos'] : [];
+            $item['mousePosition'] = isset($item['mousePosition']) ? $item['mousePosition'] : [];
+            $item['screen'] = isset($item['screen']) ? $item['screen'] : [];
 
             // Create keystroke entity
             $keyStroke = $this->createKeyStrokeEntity($item['keys'], $user, $startDateTime, $endDateTime);
@@ -96,6 +99,19 @@ class PCInspectorController extends CController
                 $keyCombo = $this->createKeyComboEntity($combo, $amount, $user, $startDateTime, $endDateTime);
                 $this->manager()->persist($keyCombo);
             }
+
+            // Create mouse position entity
+            $mousePosition = $this->createMousePositionEntity(
+                [
+                    'mouse' => $item['mousePosition'],
+                    'screen' => $item['screen']
+                ],
+                $user,
+                $startDateTime,
+                $endDateTime
+            );
+
+            $this->manager()->persist($mousePosition);
         }
 
         $this->manager()->flush();
@@ -156,5 +172,33 @@ class PCInspectorController extends CController
         ;
 
         return $keyCombo;
+    }
+
+    /**
+     * Creates a mouse position entity.
+     *
+     * @param array     $data
+     * @param User      $user
+     * @param \DateTime $start
+     * @param \DateTime $end
+     *
+     * @return MousePosition
+     */
+    private function createMousePositionEntity($data, User $user, \DateTime $start, \DateTime $end)
+    {
+        $mousePosition = new MousePosition();
+
+        $mousePosition
+            ->setCoordinateX((int)$data['mouse']['x'])
+            ->setCoordinateY((int)$data['mouse']['y'])
+            ->setScreenHeight((int)$data['screen']['height'])
+            ->setScreenWidth((int)$data['screen']['width'])
+            ->setStartTime($start)
+            ->setEndTime($end)
+            ->setRequestedAt(new \DateTime())
+            ->setUser($user)
+        ;
+
+        return $mousePosition;
     }
 }
