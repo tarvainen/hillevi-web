@@ -766,6 +766,20 @@ class KeyStroke
      */
     private $total = 0;
 
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="startTime", type="datetime")
+     */
+    private $startTime;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="endTime", type="datetime")
+     */
+    private $endTime;
+
 
     /**
      * Get id
@@ -823,6 +837,54 @@ class KeyStroke
     public function getUser()
     {
         return $this->user;
+    }
+
+    /**
+     * Set startTime
+     *
+     * @param \DateTime $startTime
+     *
+     * @return KeyStroke
+     */
+    public function setStartTime($startTime)
+    {
+        $this->startTime = $startTime;
+
+        return $this;
+    }
+
+    /**
+     * Get startTime
+     *
+     * @return \DateTime
+     */
+    public function getStartTime()
+    {
+        return $this->startTime;
+    }
+
+    /**
+     * Set endTime
+     *
+     * @param \DateTime $endTime
+     *
+     * @return KeyStroke
+     */
+    public function setEndTime($endTime)
+    {
+        $this->endTime = $endTime;
+
+        return $this;
+    }
+
+    /**
+     * Get endTime
+     *
+     * @return \DateTime
+     */
+    public function getEndTime()
+    {
+        return $this->endTime;
     }
 
     /**
