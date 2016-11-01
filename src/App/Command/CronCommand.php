@@ -76,11 +76,17 @@ class CronCommand extends ContainerAwareCommand
             $reader = new JsonInterfaceReader();
             $reader->setUrl($api->getUrl());
 
+
             $reader->setColumns($api->getColumns());
 
             $micros = microtime();
 
-            $data = $reader->execute();
+            try {
+                $data = $reader->execute();
+            } catch (\Exception $e) {
+                continue;
+            }
+
             $data['REQUESTED_AT'] = date('Y-m-d H:i:s');
 
             $bindings = [];
