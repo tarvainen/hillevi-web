@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\KeyCombo;
 use App\Entity\KeyStroke;
+use App\Entity\MouseClick;
 use App\Entity\MousePosition;
 use App\Entity\User;
 use App\Exception\ActionFailedException;
@@ -89,6 +90,7 @@ class PCInspectorController extends CController
             $item['keyCombos'] = isset($item['keyCombos']) ? $item['keyCombos'] : [];
             $item['mousePosition'] = isset($item['mousePosition']) ? $item['mousePosition'] : [];
             $item['screen'] = isset($item['screen']) ? $item['screen'] : [];
+            $item['mouseClicks'] = isset($item['mouseClicks']) ? $item['mouseClicks'] : [];
 
             // Create keystroke entity
             $keyStroke = $this->createKeyStrokeEntity($item['keys'], $user, $startDateTime, $endDateTime);
@@ -110,6 +112,19 @@ class PCInspectorController extends CController
                 $startDateTime,
                 $endDateTime
             );
+
+            // Create mouse click entities
+            foreach ($item['mouseClicks'] as $click) {
+                list($button, $x, $y) = explode(';', $click);
+                $parts = [
+                    'button' => $button,
+                    'x' => $x,
+                    'y' => $y
+                ];
+
+                $mouseClick = $this->createMouseClickEntity($parts, $user, $startDateTime, $endDateTime);
+                $this->manager()->persist($mouseClick);
+            }
 
             $this->manager()->persist($mousePosition);
         }
@@ -200,5 +215,32 @@ class PCInspectorController extends CController
         ;
 
         return $mousePosition;
+    }
+
+    /**
+     * Create a mouse click entity.
+     *
+     * @param array     $data
+     * @param User      $user
+     * @param \DateTime $start
+     * @param \DateTime $end
+     *
+     * @return MouseClick
+     */
+    private function createMouseClickEntity($data, User $user, \DateTime $start, \DateTime $end)
+    {
+        $mouseClick = new MouseClick();
+
+        $mouseClick
+            ->setButton((int)$data['button'])
+            ->setCoordinateX((int)$data['x'])
+            ->setCoordinateY((int)$data['y'])
+            ->setUser($user)
+            ->setStartTime($start)
+            ->setEndTime($end)
+            ->setRequestedAt(new \DateTime())
+        ;
+
+        return $mouseClick;
     }
 }
