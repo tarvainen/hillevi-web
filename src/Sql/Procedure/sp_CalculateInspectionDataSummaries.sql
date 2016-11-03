@@ -27,14 +27,14 @@ CREATE PROCEDURE sp_CalculateInspectionDataSummaries (
       KeyCombos   INT           DEFAULT 0
     ) ENGINE = Memory;
 
-    START TRANSACTION;
-
     /** 1. Delete all existing data between the date range */
 
     DELETE FROM inspection_data_summary
     WHERE       user_id = UserId AND
                 startTime >= StartDate AND
                 endTime <= EndDate;
+
+    START TRANSACTION;
 
     /** 2. Insert all data in to the temporary table in small pieces */
 
