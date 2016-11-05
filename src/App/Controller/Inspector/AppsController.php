@@ -220,7 +220,8 @@ class AppsController extends CController
         }
 
         foreach ($data as $item) {
-            $tmp[$item['name']][$item['hour']] = (int)$item['activeTime'];
+            $hour = (int)($item['hour']) < 10 ? '0' . $item['hour'] : $item['hour'];
+            $tmp[$item['name']][$hour] = (int)$item['activeTime'];
         }
 
         foreach ($tmp as $item) {
