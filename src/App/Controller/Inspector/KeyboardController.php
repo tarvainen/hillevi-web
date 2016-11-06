@@ -5,6 +5,7 @@ namespace App\Controller\Inspector;
 use App\Controller\CController;
 use App\Util\DateUtil;
 use Doctrine\DBAL\Statement;
+use Doctrine\ORM\Query;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use App\Annotation\Permission;
@@ -48,6 +49,8 @@ class KeyboardController extends CController
             $endTime = new \DateTime($endTime);
         }
 
+        /** 1. Fetch summarized keyboard activity data. */
+
         $sql = sprintf(
             'CALL sp_KeyboardInspectionDataSummary(%1$d, "%2$s", "%3$s", 0)',
             /** 1 */ (int) $this->getUserEntity()->getId(),
@@ -62,6 +65,36 @@ class KeyboardController extends CController
             ->query($sql);
 
         $data = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+        $stmt->closeCursor();
+        $stmt = null;
+
+        /** 2. Fetch key combos. */
+
+        $dql = '
+            SELECT
+              c.combo       as combo,
+              SUM(c.amount) as amount
+            FROM App:KeyCombo c
+            WHERE
+              c.user = :userId AND
+              c.startTime >= :startTime AND
+              c.endTime <= :endTime
+            GROUP BY c.user, c.combo
+            ORDER BY amount DESC
+        ';
+
+        /** @var Query $query */
+        $query = $this
+            ->manager()
+            ->createQuery($dql)
+            ->setMaxResults(5)
+            ->setParameter('userId', $this->getUserEntity()->getId())
+            ->setParameter('startTime', $startTime->format(DateUtil::DATETIME_DB))
+            ->setParameter('endTime', $endTime->format(DateUtil::DATETIME_DB));
+
+        $data['keyCombos'] = $query->getArrayResult();
+
 
         return new JsonResponse($data);
     }

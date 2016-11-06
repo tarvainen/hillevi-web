@@ -70,8 +70,8 @@ class AppsController extends CController
             ->manager()
             ->createQuery($dql)
             ->setParameter('userId', $this->getUserEntity()->getId())
-            ->setParameter('startTime', $startDate->format('Y-m-d H:i:s'))
-            ->setParameter('endTime', $endDate->format('Y-m-d H:i:s'))
+            ->setParameter('startTime', $startDate->format(DateUtil::DATETIME_DB))
+            ->setParameter('endTime', $endDate->format(DateUtil::DATETIME_DB))
         ;
 
         $result = $query->getArrayResult();
