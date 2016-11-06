@@ -91,11 +91,11 @@ dizda_cloud_backup:
     processor:
         type: tar
         options:
-            password: %dizda_password%
+            password: "%dizda_password%"
 
     cloud_storages:
         dropbox_sdk:
-            access_token: %didza_dropbox_token%
+            access_token: "%didza_dropbox_token%"
             remote_path: /backup
 
     databases:
