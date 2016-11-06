@@ -45,3 +45,12 @@ Build up your database with fixtures by just typing ``bash bin/create_database.s
 ##Setup server
 In your application root just run ``php bin/console server:start`` to set up the symfony server (dev) and ``php bin/console socket:start`` to open the web socket server for enabling notifications.
 
+#Backups
+Backups are provided to be pushed to the Dropbox via the Dropbox API. For this to be done you must define your Dropbox App API token to the parameters.yml file so our script can do the backup. For repeatically doing the backups define a cron job to fire the command once in a while. You can manually run the backup by typing in ``php api/bin/console dizda:backup:start``.
+
+#Make it alive!
+For making hillevi to repeatically read the api's you have defined to it you must enable a cron job to do that. Edit your crons by first typing in ``crontab -e`` which opens the file containing your cron jobs. Then just add following line to there, press Ctrl + x and confirm the save operation by pressing Y. Your cron is now up and running!
+
+The cron job may look like this (just for example, customize that how ever you want to):
+``* * * * * /usr/bin/php /var/www/api/bin/console cron:run``
+
