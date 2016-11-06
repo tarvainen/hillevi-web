@@ -21,3 +21,7 @@ parameters:
     # WebSocket server settings
     web_socket_port:   8080
     notification_secret: ThisTokenIsNotSoSecretChangeIt
+
+    # Backups
+    dizda_password: yourPassword
+    didza_dropbox_token: yourDropboxApiToken

@@ -86,3 +86,17 @@ nelmio_cors:
             allow_headers: ['*']
             allow_methods: ['POST', 'PUT', 'GET', 'DELETE']
             max_age: 3600
+
+dizda_cloud_backup:
+    processor:
+        type: tar
+        options:
+            password: %dizda_password%
+
+    cloud_storages:
+        dropbox_sdk:
+            access_token: %didza_dropbox_token%
+            remote_path: /backup
+
+    databases:
+        mysql:

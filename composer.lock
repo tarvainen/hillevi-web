@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "5bea3f263193f1c7849945df2b40365c",
-    "content-hash": "e6f389ce90d5df881bcbd1118bf969d4",
+    "hash": "d1ce50425975b45f0558109769e52afe",
+    "content-hash": "bee82330e28b77023368e62891d5964d",
     "packages": [
         {
             "name": "cboden/ratchet",
@@ -148,6 +148,74 @@
             ],
             "description": "Symfony cron",
             "time": "2015-12-18 08:03:02"
+        },
+        {
+            "name": "dizda/cloud-backup-bundle",
+            "version": "3.4.0",
+            "target-dir": "Dizda/CloudBackupBundle",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/dizda/CloudBackupBundle.git",
+                "reference": "276258762cee75f2e19e1b61cc85b738ea9fe27c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/dizda/CloudBackupBundle/zipball/276258762cee75f2e19e1b61cc85b738ea9fe27c",
+                "reference": "276258762cee75f2e19e1b61cc85b738ea9fe27c",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^5.4 || ^7.0",
+                "symfony/framework-bundle": "^2.1 || ^3.0",
+                "symfony/monolog-bundle": "^2.3"
+            },
+            "require-dev": {
+                "google/apiclient": "1.1.7",
+                "symfony/symfony": "^2.3.25"
+            },
+            "suggest": {
+                "dropbox/dropbox-sdk": "To enable upload to Dropbox",
+                "happyr/google-site-authenticator-bundle": "To enable upload dumps on google drive.",
+                "jongotlin/deadmanssnitch-bundle": "To report your successful backups to deadmanssnitch.com",
+                "knplabs/knp-gaufrette-bundle": "To use Gaufrette as a cloud storage",
+                "matthiasplappert/cloudapp-api": "To support upload to CloudApp",
+                "oneup/flysystem-bundle": "To use Flysystem as a cloud storage"
+            },
+            "type": "symfony-bundle",
+            "autoload": {
+                "psr-0": {
+                    "Dizda\\CloudBackupBundle": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jonathan Dizdarevic",
+                    "email": "dizzda@gmail.com",
+                    "homepage": "https://twitter.com/dizzda"
+                },
+                {
+                    "name": "Contributors",
+                    "homepage": "https://github.com/dizda/CloudBackupBundle/graphs/contributors"
+                }
+            ],
+            "description": "Be able to backup your database(s) and upload it to the cloud (Dropbox, CloudApp, GoogleDrive, etc.)",
+            "homepage": "https://github.com/dizda/CloudBackupBundle",
+            "keywords": [
+                "GDrive",
+                "GoogleDrive",
+                "cloudapp",
+                "database",
+                "dropbox",
+                "dump",
+                "mongodb",
+                "mysql",
+                "symfony"
+            ],
+            "time": "2016-10-18 11:48:02"
         },
         {
             "name": "doctrine/annotations",
@@ -916,6 +984,45 @@
                 "orm"
             ],
             "time": "2016-09-10 18:51:13"
+        },
+        {
+            "name": "dropbox/dropbox-sdk",
+            "version": "v1.1.7",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/dropbox/dropbox-sdk-php.git",
+                "reference": "0f1a178ca9c0271bca6426dde8f5a2241578deae"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/dropbox/dropbox-sdk-php/zipball/0f1a178ca9c0271bca6426dde8f5a2241578deae",
+                "reference": "0f1a178ca9c0271bca6426dde8f5a2241578deae",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "php": ">= 5.3"
+            },
+            "require-dev": {
+                "apigen/apigen": "4.1.2",
+                "phpunit/phpunit": "~4.0",
+                "squizlabs/php_codesniffer": "2.0.0RC3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Dropbox": "lib/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Dropbox SDK for PHP",
+            "keywords": [
+                "dropbox"
+            ],
+            "time": "2016-08-08 23:48:49"
         },
         {
             "name": "evenement/evenement",
