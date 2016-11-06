@@ -780,6 +780,15 @@ class KeyStroke
      */
     private $endTime;
 
+    /**
+     * @var float
+     *
+     * @Type("float")
+     *
+     * @ORM\Column(name="keyDownTime", type="decimal", precision=10, scale=2)
+     */
+    private $keyDownTime = 0.0;
+
 
     /**
      * Get id
@@ -2829,5 +2838,29 @@ class KeyStroke
     public function getTotal()
     {
         return $this->total;
+    }
+
+    /**
+     * Set key down time
+     *
+     * @param float $keyDownTime
+     *
+     * @return KeyStroke
+     */
+    public function setKeyDownTime($keyDownTime)
+    {
+        $this->keyDownTime = $keyDownTime;
+
+        return $this;
+    }
+
+    /**
+     * Get total
+     *
+     * @return float
+     */
+    public function getKeyDownTime()
+    {
+        return $this->keyDownTime;
     }
 }
