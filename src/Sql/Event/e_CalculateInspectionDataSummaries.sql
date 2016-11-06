@@ -2,8 +2,6 @@
 
 DROP EVENT IF EXISTS e_CalculateInspectionDataSummaries;
 
-DELIMITER //
-
 CREATE EVENT e_CalculateInspectionDataSummaries
   ON SCHEDULE EVERY 1 MINUTE STARTS NOW()
 DO BEGIN
@@ -29,6 +27,6 @@ DO BEGIN
     SET i = i + 1;
   END WHILE;
 
-END //
+END;
 
 DELIMITER ;

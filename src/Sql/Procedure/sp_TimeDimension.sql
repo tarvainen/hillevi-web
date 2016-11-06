@@ -1,7 +1,5 @@
 DROP PROCEDURE IF EXISTS sp_TimeDimension;
 
-DELIMITER //
-
 CREATE PROCEDURE sp_TimeDimension (startDate DATE, endDate DATE)
 BEGIN
 
@@ -55,7 +53,4 @@ BEGIN
   COMMIT;
 END;
 
-//
-DELIMITER ;
-
--- CALL sp_TimeDimension('2016-01-01', '2016-12-31');
+CALL sp_TimeDimension('2000-01-01', '2036-12-31');

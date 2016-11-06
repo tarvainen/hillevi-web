@@ -9,21 +9,17 @@ CREATE TABLE IF NOT EXISTS _debug (
 
 DROP FUNCTION IF EXISTS fnDebug;
 
-DELIMITER //
-
 CREATE FUNCTION fnDebug (message MEDIUMTEXT)
 RETURNS MEDIUMTEXT
 BEGIN
 
--- Write data to the debug table
-INSERT INTO _debug (MESSAGE, CREATED_AT)
-SELECT message, NOW();
+  -- Write data to the debug table
+  INSERT INTO _debug (MESSAGE, CREATED_AT)
+  SELECT message, NOW();
 
-RETURN message;
+  RETURN message;
 
-END //
-
-DELIMITER ;
+END;
 
 -- SELECT fnDebug('cat');
 -- SELECT * FROM _debug;

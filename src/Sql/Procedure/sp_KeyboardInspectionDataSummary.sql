@@ -1,7 +1,5 @@
 DROP PROCEDURE IF EXISTS sp_KeyboardInspectionDataSummary;
 
-DELIMITER //
-
 CREATE PROCEDURE sp_KeyboardInspectionDataSummary (
   UserId          INT,
   StartTime       DATETIME,
@@ -92,8 +90,6 @@ CREATE PROCEDURE sp_KeyboardInspectionDataSummary (
 
   DROP TEMPORARY TABLE IF EXISTS tmp_data;
 
-END //
-
-DELIMITER ;
+END;
 
 -- CALL sp_KeyboardInspectionDataSummary(1, DATE_SUB(NOW(), INTERVAL 10 MINUTE), NOW(), 0);

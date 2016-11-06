@@ -1,7 +1,5 @@
 DROP PROCEDURE IF EXISTS sp_CalculateInspectionDataSummaries;
 
-DELIMITER //
-
 CREATE PROCEDURE sp_CalculateInspectionDataSummaries (
   UserId    INT,      -- The user's id
   StartDate DATETIME, -- Start date time of the recalculation
@@ -85,9 +83,7 @@ CREATE PROCEDURE sp_CalculateInspectionDataSummaries (
     -- After all drop all temp tables
     DROP TEMPORARY TABLE IF EXISTS tmp_data;
 
-  END //
-
-DELIMITER ;
+  END;
 
 -- Example call:
 -- CALL sp_CalculateInspectionDataSummaries(1, NULL, NULL);
