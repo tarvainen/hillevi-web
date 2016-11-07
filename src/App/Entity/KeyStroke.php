@@ -767,6 +767,15 @@ class KeyStroke
     private $total = 0;
 
     /**
+     * @var int
+     *
+     * @Type("integer")
+     *
+     * @ORM\Column(name="pasted", type="integer")
+     */
+    private $pasted = 0;
+
+    /**
      * @var \DateTime
      *
      * @ORM\Column(name="startTime", type="datetime")
@@ -2838,6 +2847,30 @@ class KeyStroke
     public function getTotal()
     {
         return $this->total;
+    }
+
+    /**
+     * Set pasted
+     *
+     * @param integer $pasted
+     *
+     * @return KeyStroke
+     */
+    public function setPasted($pasted)
+    {
+        $this->total = $pasted;
+
+        return $this;
+    }
+
+    /**
+     * Get pasted
+     *
+     * @return int
+     */
+    public function getPasted()
+    {
+        return $this->pasted;
     }
 
     /**
