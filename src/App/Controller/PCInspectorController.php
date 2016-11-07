@@ -6,6 +6,7 @@ use App\Entity\ActiveApplication;
 use App\Entity\KeyCombo;
 use App\Entity\KeyStroke;
 use App\Entity\MouseClick;
+use App\Entity\MousePath;
 use App\Entity\MousePosition;
 use App\Entity\User;
 use App\Exception\ActionFailedException;
@@ -92,6 +93,7 @@ class PCInspectorController extends CController
             $item['mousePosition'] = isset($item['mousePosition']) ? $item['mousePosition'] : [];
             $item['screen'] = isset($item['screen']) ? $item['screen'] : [];
             $item['mouseClicks'] = isset($item['mouseClicks']) ? $item['mouseClicks'] : [];
+            $item['mousePath'] = isset($item['mousePath']) ? $item['mousePath'] : '';
 
             // Create keystroke entity
             $keyStroke = $this->createKeyStrokeEntity($item['keys'], $user, $startDateTime, $endDateTime);
@@ -113,6 +115,17 @@ class PCInspectorController extends CController
                 $startDateTime,
                 $endDateTime
             );
+
+            $this->manager()->persist($mousePosition);
+
+            $mousePath = $this->createMousePathEntity(
+                $item['mousePath'],
+                $user,
+                $startDateTime,
+                $endDateTime
+            );
+
+            $this->manager()->persist($mousePath);
 
             // Create mouse click entities
             foreach ($item['mouseClicks'] as $click) {
@@ -142,7 +155,6 @@ class PCInspectorController extends CController
                 $this->manager()->persist($activeApplication);
             }
 
-            $this->manager()->persist($mousePosition);
         }
 
         $this->manager()->flush();
@@ -284,5 +296,28 @@ class PCInspectorController extends CController
         ;
 
         return $activeApplication;
+    }
+
+    /**
+     * Create the mouse path entity.
+     *
+     * @param   string    $data
+     * @param   User      $user
+     * @param   \DateTime $start
+     * @param   \DateTime $end
+     * @return  MousePath
+     */
+    private function createMousePathEntity($data, User $user, \DateTime $start, \DateTime $end)
+    {
+        $mousePathEntity = new MousePath();
+
+        $mousePathEntity
+            ->setStartTime($start)
+            ->setEndTime($end)
+            ->setUser($user)
+            ->setPath($data)
+        ;
+
+        return $mousePathEntity;
     }
 }
