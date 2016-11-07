@@ -46,6 +46,19 @@ class PCInspectorController extends CController
             throw new ActionFailedException('auth');
         }
 
+        $user = $this
+            ->manager()
+            ->getRepository('App:User')
+            ->findOneBy(
+                [
+                    'apiKey' => $token
+                ]
+            );
+
+        if (!$user) {
+            throw new ActionFailedException('auth');
+        }
+
         return new JsonResponse('OK');
     }
 
