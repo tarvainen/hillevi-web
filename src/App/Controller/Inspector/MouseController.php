@@ -110,25 +110,17 @@ class MouseController extends CController
                 $lastCoordinate = $coordinate;
             }
         }
-        
-        $filename = sprintf(
-            'tmp/%1$s.jpg',
-            /** 1 */ md5(rand(0, 100))
-        );
 
-        // Save the file
-        imagejpeg($image, $filename, 100);
+        ob_start();
+        imagejpeg($image, NULL, 100);
 
-        // Encode to the base64
-        $type = pathinfo($filename, PATHINFO_EXTENSION);
-        $data = file_get_contents($filename);
+        // Get contents
+        $data = ob_get_clean();
 
-        unlink($filename);
-
+        // Convert image to base64
         $base64 = sprintf(
-            'data:image/%1$s;base64,%2$s',
-            /** 1 */ $type,
-            /** 2 */ base64_encode($data)
+            'data:image/jpeg;base64,%1$s',
+            /** 1 */ base64_encode($data)
         );
 
         return new Response($base64, 200);
