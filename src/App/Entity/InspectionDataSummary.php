@@ -58,6 +58,13 @@ class InspectionDataSummary
     private $keyCombos;
 
     /**
+     * @var int
+     *
+     * @ORM\Column(name="pasted", type="integer")
+     */
+    private $pasted;
+
+    /**
      * @var User
      *
      * @ManyToOne(targetEntity="User")
@@ -217,5 +224,29 @@ class InspectionDataSummary
     public function getKeyCombos()
     {
         return $this->keyCombos;
+    }
+
+    /**
+     * Set pasted
+     *
+     * @param integer $pasted
+     *
+     * @return InspectionDataSummary
+     */
+    public function setPasted($pasted)
+    {
+        $this->pasted = $pasted;
+
+        return $this;
+    }
+
+    /**
+     * Get pasted
+     *
+     * @return int
+     */
+    public function getPasted()
+    {
+        return $this->pasted;
     }
 }

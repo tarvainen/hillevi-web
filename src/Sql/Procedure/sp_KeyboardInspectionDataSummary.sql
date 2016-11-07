@@ -24,17 +24,21 @@ CREATE PROCEDURE sp_KeyboardInspectionDataSummary (
     averageKeyPressDuration DECIMAL(10,4) DEFAULT 0.0,
     totalKeyCombos          BIGINT        DEFAULT 0.0,
     keyCombosTypingSpeed    DECIMAL(10,2) DEFAULT 0.0,
-    timeGroup               VARCHAR(12)
+    timeGroup               VARCHAR(12),
+    totalPastedAmount       BIGINT        DEFAULT 0
   ) ENGINE = MEMORY;
 
   START TRANSACTION;
 
   -- Basic key strokes
-  INSERT INTO tmp_data (userId, totalKeysTyped, averageTypingSpeed, averageKeyPressDuration, timeGroup)
+  INSERT INTO tmp_data (
+    userId, totalKeysTyped, averageTypingSpeed, averageKeyPressDuration, totalPastedAmount, timeGroup
+  )
   SELECT      UserId,
               SUM(k.total),
               SUM(k.total) / SUM(TIMESTAMPDIFF(SECOND, k.startTime, k.endTime)),
               AVG(NULLIF(k.keyDownTime, 0)), -- Ignore zero values (nobody can do that, right?)
+              SUM(k.pasted),
               CASE (CalculationMode)
                 WHEN 0 THEN NULL
                 WHEN 1 THEN HOUR(k.startTime)
@@ -84,6 +88,7 @@ CREATE PROCEDURE sp_KeyboardInspectionDataSummary (
               SUM(t.averageKeyPressDuration)  as averageKeyPressDuration,
               SUM(t.totalKeyCombos)           as totalKeyCombos,
               SUM(t.keyCombosTypingSpeed)     as keyCombosTypingSpeed,
+              SUM(t.totalPastedAmount)        as totalPasted,
               t.timeGroup                     as timeGroup
   FROM        tmp_data t
   GROUP BY    t.userId, t.timeGroup;

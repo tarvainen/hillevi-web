@@ -22,7 +22,8 @@ CREATE PROCEDURE sp_CalculateInspectionDataSummaries (
       EndTime     DATETIME,
       KeysTyped   INT           DEFAULT 0,
       TypingSpeed DECIMAL(10,2) DEFAULT 0,
-      KeyCombos   INT           DEFAULT 0
+      KeyCombos   INT           DEFAULT 0,
+      Pasted      BIGINT        DEFAULT 0
     ) ENGINE = Memory;
 
     /** 1. Delete all existing data between the date range */
@@ -38,13 +39,14 @@ CREATE PROCEDURE sp_CalculateInspectionDataSummaries (
 
     -- Typing speed and total amount of keys typed
     INSERT INTO tmp_data (
-      UserId, StartTime, EndTime, KeysTyped, TypingSpeed
+      UserId, StartTime, EndTime, KeysTyped, TypingSpeed, Pasted
     )
       SELECT      UserId,
                   MIN(_keys.startTime),
                   MAX(_keys.endTime),
                   SUM(_keys.total),
-                  SUM(_keys.total) / @Interval
+                  SUM(_keys.total) / @Interval,
+                  SUM(_keys.pasted)
 
       FROM        keystroke _keys
       WHERE       _keys.user_id = UserId
@@ -65,14 +67,15 @@ CREATE PROCEDURE sp_CalculateInspectionDataSummaries (
     /** 3. Select all from temporary table to the real table */
 
     INSERT INTO inspection_data_summary (
-      user_id, startTime, endTime, keysTyped, typingSpeed, keyCombos
+      user_id, startTime, endTime, keysTyped, typingSpeed, keyCombos, pasted
     )
       SELECT      t.UserId,
                   t.StartTime,
                   t.EndTime,
                   IFNULL(SUM(t.KeysTyped), 0),
                   IFNULL(SUM(t.TypingSpeed), 0),
-                  IFNULL(SUM(t.KeyCombos), 0)
+                  IFNULL(SUM(t.KeyCombos), 0),
+                  IFNULL(SUM(t.Pasted), 0)
       FROM        tmp_data t
       GROUP BY    t.UserId, t.StartTime;
 
@@ -86,4 +89,4 @@ CREATE PROCEDURE sp_CalculateInspectionDataSummaries (
   END;
 
 -- Example call:
--- CALL sp_CalculateInspectionDataSummaries(1, NULL, NULL);
+CALL sp_CalculateInspectionDataSummaries(1, NULL, NULL);
