@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\ActiveApplication;
+use App\Entity\ComputerUsageSnapshot;
 use App\Entity\KeyCombo;
 use App\Entity\KeyStroke;
 use App\Entity\MouseClick;
@@ -107,10 +108,14 @@ class PCInspectorController extends CController
             $item['screen'] = isset($item['screen']) ? $item['screen'] : [];
             $item['mouseClicks'] = isset($item['mouseClicks']) ? $item['mouseClicks'] : [];
             $item['mousePath'] = isset($item['mousePath']) ? $item['mousePath'] : '';
+            $item['common'] = isset($item['common']) ? $item['common'] : [];
 
             // Create keystroke entity
             $keyStroke = $this->createKeyStrokeEntity($item['keys'], $user, $startDateTime, $endDateTime);
             $this->manager()->persist($keyStroke);
+
+            $snapshot = $this->createComputerUsageSnapshotEntity($item['common'], $user, $startDateTime, $endDateTime);
+            $this->manager()->persist($snapshot);
 
             // Create key combo entities. There will be one entity per key combo.
             foreach ($item['keyCombos'] as $combo => $amount) {
@@ -332,5 +337,31 @@ class PCInspectorController extends CController
         ;
 
         return $mousePathEntity;
+    }
+
+    /**
+     * Create the computer usage snapshot entity.
+     *
+     * @param array      $data
+     * @param User       $user
+     * @param \DateTime  $start
+     * @param \DateTime  $end
+     *
+     * @return ComputerUsageSnapshot
+     */
+    private function createComputerUsageSnapshotEntity($data, User $user, \DateTime $start, \DateTime $end)
+    {
+        $snapshot = new ComputerUsageSnapshot();
+
+        $duration = ($end->format('U') - $start->format('U')) * 1000;
+        $idle = $data['idleTime'];
+
+        $snapshot
+            ->setUser($user)
+            ->setStartTime($start)
+            ->setEndTime($end)
+            ->setActiveUsage($duration - $idle);
+
+        return $snapshot;
     }
 }
