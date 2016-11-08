@@ -238,4 +238,66 @@ class KeyboardController extends CController
 
         return new JsonResponse($result);
     }
+
+    /**
+     * Action for fetching typing speed for the dashboard widget.
+     *
+     * @Route("typing/speed")
+     * @Method("POST")
+     *
+     * @return JsonResponse
+     */
+    public function getKeyboardTypingSpeedAction()
+    {
+        list($startTime, $endTime) = $this->mapFromRequest(['startTime', 'endTime']);
+
+        $startTime = DateUtil::validate($startTime, new \DateTime('today midnight'));
+        $endTime = DateUtil::validate($endTime, new \DateTime('tomorrow midnight - 1 minute'));
+
+        $labels = [];
+
+        for ($i = 0; $i < 24; $i++) {
+            $labels[] = $i + 1;
+        }
+
+        $sql = sprintf(
+            '
+              SELECT
+                AVG(i.typingSpeed) as typingSpeed,
+                HOUR(i.startTime)  as hour
+              FROM inspection_data_summary i
+              WHERE
+                i.user_id = %1$d AND
+                i.startTime >= "%2$s" AND
+                i.endTime <= "%3$s"
+              GROUP BY HOUR(i.startTime)
+              ORDER BY HOUR(i.startTime);
+            ',
+            /** 1 */ $this->getUserEntity()->getId(),
+            /** 2 */ $startTime->format(DateUtil::DATETIME_DB),
+            /** 3 */ $endTime->format(DateUtil::DATETIME_DB)
+        );
+
+        /** @var Statement $stmt */
+        $stmt = $this->manager()->getConnection()->query($sql);
+
+        $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        $data = [];
+
+        // Format the data to the right format for the chart
+        foreach ($labels as $label) {
+            $data[$label] = 0;
+        }
+
+        foreach ($result as $item) {
+            $data[$item['hour']] = (float) $item['typingSpeed'];
+        }
+
+        $response = [
+            'labels' => $labels,
+            'data'   => [array_values($data)]
+        ];
+
+        return new JsonResponse($response);
+    }
 }
