@@ -11,6 +11,7 @@ use Doctrine\ORM\Mapping\JoinTable;
 use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\OneToOne;
 use JMS\Serializer\Annotation\Groups;
+use JMS\Serializer\Annotation\Type;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -25,6 +26,7 @@ class User extends EntityBase
      * @var int
      *
      * @Groups({"list"})
+     * @Type("integer")
      *
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
@@ -35,6 +37,8 @@ class User extends EntityBase
     /**
      * @var string
      *
+     * @Type("string")
+     *
      * @ORM\Column(name="token", type="string", length=6000)
      */
     private $token = '';
@@ -43,6 +47,7 @@ class User extends EntityBase
      * @var string
      *
      * @Groups({"list"})
+     * @Type("string")
      *
      * @ORM\Column(name="firstname", type="string", length=255)
      */
@@ -52,6 +57,7 @@ class User extends EntityBase
      * @var string
      *
      * @Groups({"list"})
+     * @Type("string")
      *
      * @ORM\Column(name="lastname", type="string", length=255)
      */
@@ -61,6 +67,7 @@ class User extends EntityBase
      * @var string
      *
      * @Groups({"list"})
+     * @Type("string")
      *
      * @ORM\Column(name="email", type="string", length=255)
      */
@@ -69,12 +76,18 @@ class User extends EntityBase
     /**
      * @var string
      *
+     * @Type("string")
+     *
      * @ORM\Column(name="password", type="string", length=255)
      */
     private $password;
 
     /**
      * @var string
+     *
+     * @Groups({"list"})
+     * @Type("string")
+     *
      * @ORM\Column(name="username", type="string", length=255)
      */
     private $username;
@@ -83,6 +96,7 @@ class User extends EntityBase
      * @var string
      *
      * @Groups({"list"})
+     * @Type("string")
      *
      * @ORM\Column(name="phone", type="string", length=255)
      */
