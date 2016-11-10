@@ -22,48 +22,55 @@ use Symfony\Component\HttpFoundation\JsonResponse;
  */
 class ComputerController extends CController
 {
+    const MODE_WHOLE_TIME  = 'total';
+    const MODE_ONLINE_TIME = 'online';
+
     /**
-     * Action for fetching the activity percentage for the specified date range.
+     * Action for fetching the activity percentage for the specified date rang (by the total active time).
      *
      * @Permission
      *
-     * @Route("activity")
+     * @Route("activity/{mode}")
      * @Method("POST")
+     *
+     * @param string $mode  Used mode in data fetch. Default 'total'.
      *
      * @return JsonResponse
      */
-    public function getActivityPercentageAction()
+    public function getActivityPercentageAction($mode)
     {
-        list($startDate, $endDate) = $this->mapFromRequest(['startDate', 'endDate']);
+        list($startTime, $endTime) = $this->mapFromRequest(['startDate', 'endDate']);
 
-        if (!isset($startDate)) {
-            $startDate = new \DateTime('1900-01-01');
-        } else {
-            $startDate = new \DateTime($startDate);
+        $startTime = DateUtil::validate($startTime, new \DateTime('today midnight'));
+        $endTime = DateUtil::validate($endTime, new \DateTime('tomorrow midnight - 1 minute'));
+
+        $timeSumClause = 'SUM(TIMESTAMPDIFF(SECOND, c.startTime, c.endTime))';
+
+        if ($mode === self::MODE_WHOLE_TIME) {
+            $timeSumClause = sprintf(
+                'TIMESTAMPDIFF(SECOND, "%1$s", "%2$s")',
+                /** 1 */ $startTime->format(DateUtil::DATETIME_DB),
+                /** 2 */ $endTime->format(DateUtil::DATETIME_DB)
+            );
         }
 
-        if (!isset($endDate)) {
-            $endDate = new \DateTime('2036-01-01');
-        } else {
-            $endDate = new \DateTime($endDate);
-        }
-        
         $sql = sprintf(
             '
               SELECT
                 ROUND(
-                  ((SUM(c.activeUsage) / 1000) / SUM(TIMESTAMPDIFF(SECOND, c.startTime, c.endTime))) * 100
+                  ((SUM(c.activeUsage) / 1000) / %1$s) * 100
                 , 2) as activePercentage
               FROM computer_usage_snapshot c
               WHERE
-                c.user_id = %1$s AND
-                c.startTime >= "%2$s" AND
-                c.endTime <= "%3$s"
+                c.user_id = %2$s AND
+                c.startTime >= "%3$s" AND
+                c.endTime <= "%4$s"
               GROUP BY c.user_id
             ',
-            /** 1 */ $this->getUserEntity()->getId(),
-            /** 2 */ $startDate->format(DateUtil::DATETIME_DB),
-            /** 3 */ $endDate->format(DateUtil::DATETIME_DB)
+            /** 1 */ $timeSumClause,
+            /** 2 */ $this->getUserEntity()->getId(),
+            /** 3 */ $startTime->format(DateUtil::DATETIME_DB),
+            /** 4 */ $endTime->format(DateUtil::DATETIME_DB)
         );
 
         /** @var Statement $stmt */
