@@ -45,7 +45,7 @@ class Permission extends ContainerAwareAnnotation
             throw new UnauthorizedException();
         }
 
-        $permissions = explode(',', $this->parseSimpleAnnotation($this->perm));
+        $permissions = array_filter(explode(',', $this->parseSimpleAnnotation($this->perm)));
 
         // Check if admin, then there has to be no control over any routes
         if ($this->user->isAdmin()) {
