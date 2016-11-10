@@ -4,6 +4,7 @@ namespace App\Controller\AppSetting;
 use App\Controller\CController;
 use App\Entity\Settings;
 use App\Entity\User;
+use App\Exception\ActionFailedException;
 use App\Util\Json;
 use Doctrine\Common\Collections\ArrayCollection;
 use JMS\Serializer\SerializationContext;
@@ -88,5 +89,33 @@ class UsersController extends CController
         return new Response(
             $this->serializer->serialize($user, 'json')
         );
+    }
+
+    /**
+     * Action for deleting the user.
+     *
+     * @Permission
+     *
+     * @Route("delete/{id}")
+     * @Method("POST")
+     *
+     * @param string $id
+     *
+     * @return Response
+     */
+    public function deleteAction($id)
+    {
+        // Find the user
+        $user = $this->manager()->find('App:User', $id);
+
+        if (!$user) {
+            throw new ActionFailedException('removal');
+        }
+
+        // Delete user from the database
+        $this->manager()->remove($user);
+        $this->manager()->flush();
+
+        return new Response('OK');
     }
 }
