@@ -10,6 +10,7 @@ use Doctrine\ORM\Mapping\ManyToMany;
 use Doctrine\ORM\Mapping\JoinTable;
 use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\OneToOne;
+use JMS\Serializer\Annotation\Groups;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -22,6 +23,8 @@ class User extends EntityBase
 {
     /**
      * @var int
+     *
+     * @Groups({"list"})
      *
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
@@ -39,6 +42,8 @@ class User extends EntityBase
     /**
      * @var string
      *
+     * @Groups({"list"})
+     *
      * @ORM\Column(name="firstname", type="string", length=255)
      */
     private $firstname = '';
@@ -46,12 +51,16 @@ class User extends EntityBase
     /**
      * @var string
      *
+     * @Groups({"list"})
+     *
      * @ORM\Column(name="lastname", type="string", length=255)
      */
     private $lastname = '';
 
     /**
      * @var string
+     *
+     * @Groups({"list"})
      *
      * @ORM\Column(name="email", type="string", length=255)
      */
@@ -72,6 +81,8 @@ class User extends EntityBase
 
     /**
      * @var string
+     *
+     * @Groups({"list"})
      *
      * @ORM\Column(name="phone", type="string", length=255)
      */
