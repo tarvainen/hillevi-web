@@ -50,7 +50,6 @@ class AuthController extends CController
             ->getQuery();
 
         $user = $query->getArrayResult()[0];
-        $user['ui'] = $this->getUiSettings();
 
         return new JsonResponse($user);
     }
@@ -248,28 +247,5 @@ class AuthController extends CController
         $em->flush();
 
         return new JsonResponse('OK');
-    }
-
-    /**
-     * Get ui setting for the current user. This setting determines which components
-     * is shown in the ui for the user.
-     *
-     * @return array
-     */
-    private function getUiSettings()
-    {
-        $settings = [];
-        $user = $this->getUserEntity();
-
-        $permissions = $this
-            ->manager()
-            ->getRepository('App:Permission')
-            ->findAll();
-
-        foreach ($permissions as $permission) {
-            $settings[$permission->getName()] = $user->hasRight($permission->getName());
-        }
-
-        return $settings;
     }
 }

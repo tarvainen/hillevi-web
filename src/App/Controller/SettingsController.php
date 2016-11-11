@@ -177,4 +177,32 @@ class SettingsController extends CController
 
         return new JsonResponse('OK');
     }
+
+    /**
+     * Get ui setting for the current user. This setting determines which components
+     * is shown in the ui for the user.
+     *
+     * @Permission
+     *
+     * @Route("ui")
+     * @Method("POST")
+     *
+     * @return JsonResponse
+     */
+    public function getUiSettingsAction()
+    {
+        $settings = [];
+        $user = $this->getUserEntity();
+
+        $permissions = $this
+            ->manager()
+            ->getRepository('App:Permission')
+            ->findAll();
+
+        foreach ($permissions as $permission) {
+            $settings[$permission->getName()] = $user->hasRight($permission->getName());
+        }
+
+        return new JsonResponse($settings);
+    }
 }
