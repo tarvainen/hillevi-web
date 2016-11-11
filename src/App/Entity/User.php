@@ -432,4 +432,18 @@ class User extends EntityBase
             return $right->getName() === Right::ADMIN;
         });
     }
+
+    /**
+     * Get full name
+     *
+     * @return string
+     */
+    public function getFullName()
+    {
+        return sprintf(
+            '%1$s %2$s',
+            /** 1 */ $this->getFirstname(),
+            /** 2 */ $this->getLastname()
+        );
+    }
 }
