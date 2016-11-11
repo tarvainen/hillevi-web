@@ -434,6 +434,25 @@ class User extends EntityBase
     }
 
     /**
+     * Check if user has specified right.
+     *
+     * @param  string $right
+     *
+     * @return bool
+     */
+    public function hasRight($right)
+    {
+        if ($this->isAdmin()) {
+            return true;
+        }
+
+        return $this->rights->exists(function ($i, $p) use ($right) {
+            /** @var Permission $p */
+            return $p->getName() == $right;
+        });
+    }
+
+    /**
      * Get full name
      *
      * @return string
