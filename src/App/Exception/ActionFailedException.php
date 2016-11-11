@@ -21,7 +21,7 @@ class ActionFailedException extends HttpException
     public function __construct($action)
     {
         parent::__construct(500, sprintf(
-            'Action %1$s failed.',
+            'Action failed: %1$s',
             /** 1 */ $action
         ));
     }

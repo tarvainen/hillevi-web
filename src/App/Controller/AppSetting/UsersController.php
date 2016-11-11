@@ -31,17 +31,24 @@ class UsersController extends CController
      *
      * @Permission
      *
-     * @Route("find")
+     * @Route("find/{id}")
      * @Method("POST")
+     *
+     * @param string $id
      *
      * @return Response
      */
-    public function findAction()
+    public function findAction($id)
     {
-        $data = $this
+        $repository = $this
             ->manager()
-            ->getRepository('App:User')
-            ->findAll();
+            ->getRepository('App:User');
+
+        if ((int)$id === 0) {
+            $data = $repository->findAll();
+        } else {
+            $data = $repository->findOneById($id);
+        }
 
         return new Response(
             $this->serializer->serialize(
@@ -69,18 +76,23 @@ class UsersController extends CController
         /** @var User $user */
         $user = $this->serializer->deserialize($json, 'App\Entity\User', 'json');
 
-        // Generate default password out of username and a current year
-        $defaultPassword = $user->getUsername() . date('Y');
+        if (!$user->getId() > 0) {
+            // Generate default password out of username and a current year
+            $defaultPassword = $user->getUsername() . date('Y');
 
-        // Set password and api key
-        $user->setPassword($defaultPassword);
-        $user->refreshApiKey();
+            // Set password and api key
+            $user->setPassword($defaultPassword);
+            $user->refreshApiKey();
 
-        $settings = new Settings();
-        $this->manager()->persist($settings);
+            $settings = new Settings();
+            $this->manager()->persist($settings);
 
-        $user->setSettings($settings);
-        $user->setRights(new ArrayCollection());
+            $user->setSettings($settings);
+            $user->setRights(new ArrayCollection());
+        } else {
+            $user = $this->manager()->find('App:User', $user->getId());
+            $user->fromArray($request->request->all());
+        }
 
         // Save user
         $this->manager()->persist($user);
@@ -105,8 +117,12 @@ class UsersController extends CController
      */
     public function deleteAction($id)
     {
-        // Find the user
+        /** @var User $user */
         $user = $this->manager()->find('App:User', $id);
+
+        if ($user->isAdmin()) {
+            throw new ActionFailedException('you can not delete the admin user');
+        }
 
         if (!$user) {
             throw new ActionFailedException('removal');

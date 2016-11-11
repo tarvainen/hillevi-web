@@ -103,7 +103,7 @@ class User extends EntityBase
     private $phone = '';
 
     /**
-     * @ManyToMany(targetEntity="Permission")
+     * @ManyToMany(targetEntity="Permission", cascade={"all"})
      * @JoinTable(name="users_permissions", joinColumns={@JoinColumn(name="user_id", referencedColumnName="id")})
      *
      * @var ArrayCollection
