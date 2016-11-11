@@ -36,7 +36,8 @@
         "symfony/event-dispatcher": "^3.1",
         "ratchet/pawl": "^0.2.2",
         "dizda/cloud-backup-bundle": "^3.4",
-        "dropbox/dropbox-sdk": "^1.1"
+        "dropbox/dropbox-sdk": "^1.1",
+        "doctrine/doctrine-migrations-bundle": "^1.0"
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",

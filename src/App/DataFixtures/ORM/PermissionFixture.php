@@ -26,14 +26,7 @@ class PermissionFixture extends AbstractFixture implements OrderedFixtureInterfa
     {
         // Define all loaded right modules here
         $rights = [
-            Right::ADMIN,
-            Right::DASHBOARD,
-            Right::USER_SETTINGS,
-
-            // Interface right modules
-            Right::INTERFACE,
-            Right::INTERFACE_CREATE,
-            Right::INTERFACE_DELETE,
+            Right::ADMIN
         ];
 
         foreach ($rights as $right) {

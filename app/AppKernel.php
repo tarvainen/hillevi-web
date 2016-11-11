@@ -17,6 +17,7 @@ class AppKernel extends Kernel
             new Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
             new \Nelmio\CorsBundle\NelmioCorsBundle(),
             new Dizda\CloudBackupBundle\DizdaCloudBackupBundle(),
+            new Doctrine\Bundle\MigrationsBundle\DoctrineMigrationsBundle(),
             new App\App(),
         ];
 
