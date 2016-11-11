@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Util\Sql;
+use Doctrine\DBAL\Statement;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -234,5 +235,38 @@ class FilterController extends CController
         $result = [];
 
         return new JsonResponse($result);
+    }
+
+    /**
+     * Action to fetch users to the dropdown lists.
+     *
+     * @Permission
+     *
+     * @Route("users")
+     * @Method("POST")
+     *
+     * @return JsonResponse
+     */
+    public function getUsersOptionsAction()
+    {
+        $sql = sprintf(
+            '
+              SELECT
+                u.id,
+                CONCAT(u.firstname, " ", u.lastname) as name
+              FROM user u
+              ORDER BY u.lastname, u.firstname
+            '
+        );
+
+        /** @var Statement $stmt */
+        $stmt = $this
+            ->manager()
+            ->getConnection()
+            ->query($sql);
+
+        $data = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+        return new JsonResponse($data);
     }
 }
