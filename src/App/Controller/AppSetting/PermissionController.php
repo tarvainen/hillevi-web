@@ -3,9 +3,12 @@
 namespace App\Controller\AppSetting;
 
 use App\Controller\CController;
+use App\Util\Logger;
+use JMS\Serializer\SerializationContext;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use App\Annotation\Permission;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -40,6 +43,34 @@ class PermissionController extends CController
         return new Response(
             $this->serializer->serialize(
                 $data, 'json'
+            )
+        );
+    }
+
+    /**
+     * Action to fetch the permissions for the requested users.
+     *
+     * @Permission
+     *
+     * @Route("users")
+     * @Method("POST")
+     *
+     * @param Request $request
+     *
+     * @return Response
+     */
+    public function getUsersPermissionsAction(Request $request)
+    {
+        $userIds = $request->get('users', []);
+
+        $data = $this
+            ->manager()
+            ->getRepository('App:User')
+            ->findById($userIds);
+        
+        return new Response(
+            $this->serializer->serialize(
+                $data, 'json', SerializationContext::create()->setGroups(['permissions', 'list'])
             )
         );
     }

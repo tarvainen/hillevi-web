@@ -106,6 +106,9 @@ class User extends EntityBase
      * @ManyToMany(targetEntity="Permission", cascade={"all"})
      * @JoinTable(name="users_permissions", joinColumns={@JoinColumn(name="user_id", referencedColumnName="id")})
      *
+     * @Groups({"permissions"})
+     * @Type("array")
+     *
      * @var ArrayCollection
      */
     private $rights;
