@@ -47,7 +47,7 @@ class InspectionDataSummary
     private $keysTyped;
 
     /**
-     * @var string
+     * @var float
      *
      * @ORM\Column(name="typingSpeed", type="decimal", precision=10, scale=2)
      */
@@ -66,6 +66,27 @@ class InspectionDataSummary
      * @ORM\Column(name="pasted", type="integer")
      */
     private $pasted;
+
+    /**
+     * @var float
+     *
+     * @ORM\Column(name="activityPercentage", type="decimal", precision=10, scale=2)
+     */
+    private $activityPercentage;
+
+    /**
+     * @var float
+     *
+     * @ORM\Column(name="pastePercentage", type="decimal", precision=10, scale=2)
+     */
+    private $pastePercentage;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="mouseTravelDistance", type="integer")
+     */
+    private $mouseTravelDistance;
 
     /**
      * @var User
@@ -184,7 +205,7 @@ class InspectionDataSummary
     /**
      * Set typingSpeed
      *
-     * @param string $typingSpeed
+     * @param float $typingSpeed
      *
      * @return InspectionDataSummary
      */
@@ -198,7 +219,7 @@ class InspectionDataSummary
     /**
      * Get typingSpeed
      *
-     * @return string
+     * @return float
      */
     public function getTypingSpeed()
     {
@@ -251,5 +272,77 @@ class InspectionDataSummary
     public function getPasted()
     {
         return $this->pasted;
+    }
+
+    /**
+     * Set activity percentage
+     *
+     * @param float $activityPercentage
+     *
+     * @return InspectionDataSummary
+     */
+    public function setActivityPercentage($activityPercentage)
+    {
+        $this->activityPercentage = $activityPercentage;
+
+        return $this;
+    }
+
+    /**
+     * Get activity percentage.
+     *
+     * @return float
+     */
+    public function getActivityPercentage()
+    {
+        return $this->activityPercentage;
+    }
+
+    /**
+     * Set paste percentage
+     *
+     * @param float $pastePercentage
+     *
+     * @return InspectionDataSummary
+     */
+    public function setPastePercentage($pastePercentage)
+    {
+        $this->pastePercentage = $pastePercentage;
+
+        return $this;
+    }
+
+    /**
+     * Get paste percentage.
+     *
+     * @return float
+     */
+    public function getPastePercentage()
+    {
+        return $this->pastePercentage;
+    }
+
+    /**
+     * Set mouse travel distance
+     *
+     * @param int $mouseTravelDistance
+     *
+     * @return InspectionDataSummary
+     */
+    public function setMouseTravelDistance($mouseTravelDistance)
+    {
+        $this->mouseTravelDistance = $mouseTravelDistance;
+
+        return $this;
+    }
+
+    /**
+     * Get mouse travel distance (in pixels).
+     *
+     * @return int
+     */
+    public function getMouseTravelDistance()
+    {
+        return $this->mouseTravelDistance;
     }
 }
