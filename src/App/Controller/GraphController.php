@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\ApiReader;
+use App\Entity\InspectionDataSummary;
 use App\Exception\ActionFailedException;
 use App\Util\Arrays;
 use App\Util\Json;
@@ -26,6 +27,11 @@ use App\Annotation\Permission;
  */
 class GraphController extends CController
 {
+    const TYPE_USER_DEFINED   = 'user-defined';
+    const TYPE_SYSTEM_DEFINED = 'system-defined';
+
+    const MOD_PC_INSPECTOR = 0;
+
     /**
      * Action to fetch available columns for graph.
      *
@@ -59,7 +65,9 @@ class GraphController extends CController
                         'api' => $item->getName(),
                         'table' => $item->getTableName(),
                         'field' => $col['field'],
+                        'type' => self::TYPE_USER_DEFINED,
                         'unit' => isset($col['unit']) ? $col['unit'] : '',
+                        'timedBy' => isset($col['timedBy']) ? $col['timedBy'] : 'REQUESTED_AT',
                         'aggregate' => isset($col['aggregate']) ? $col['aggregate'] : Sql::AGGREGATE_SUM
                     ];
 
@@ -78,6 +86,8 @@ class GraphController extends CController
                 }
             }
         }
+
+        $columns = array_merge($columns, $this->getSystemInterfaceOptions());
 
         return new JsonResponse($columns);
     }
@@ -148,47 +158,60 @@ class GraphController extends CController
         $grouping = $this->getGroupBy($groupBy);
 
         foreach ($columns as $column) {
+            if ($column['type'] === self::TYPE_SYSTEM_DEFINED) {
+                $userWhere = sprintf(
+                    'AND x.user_id = %1$s',
+                    $this->getUserEntity()->getId()
+                );
+            } else {
+                $userWhere = 'AND 1';
+            }
+
             if ($groupBy !== '%d.%m %k') {
                 $sql = sprintf(
                     '
-                  SELECT
-                    DATE_FORMAT(T.FULLDATE, "%1$s") AS label,
-                    ROUND(%2$s(x.%3$s), 2) AS %3$s
-                  FROM
-                    TIME_DIMENSION T
-                  CROSS JOIN %4$s x ON DATE(x.REQUESTED_AT) = T.FULLDATE 
-                  WHERE
-                    T.FULLDATE BETWEEN "%5$s" AND "%6$s"
-                  GROUP BY %7$s
-                  ORDER BY T.FULLDATE;
-                ',
-                /** 1 */ $groupBy,
-                /** 2 */ Sql::$aggregates[$column['aggregate']],
-                /** 3 */ $column['field'],
-                /** 4 */ $column['table'],
-                /** 5 */ $startDate->format('Y-m-d'),
-                /** 6 */ $endDate->format('Y-m-d'),
-                /** 7 */ $grouping
+                      SELECT
+                        DATE_FORMAT(T.FULLDATE, "%1$s") AS label,
+                        ROUND(%2$s(x.%3$s), 2) AS %3$s
+                      FROM
+                        TIME_DIMENSION T
+                      CROSS JOIN %4$s x ON DATE(x.%5$s) = T.FULLDATE 
+                      WHERE
+                        T.FULLDATE BETWEEN "%6$s" AND "%7$s" %8$s
+                      GROUP BY %9$s
+                      ORDER BY T.FULLDATE;
+                    ',
+                    /** 1 */ $groupBy,
+                    /** 2 */ Sql::$aggregates[$column['aggregate']],
+                    /** 3 */ $column['field'],
+                    /** 4 */ $column['table'],
+                    /** 5 */ $column['timedBy'],
+                    /** 6 */ $startDate->format('Y-m-d'),
+                    /** 7 */ $endDate->format('Y-m-d'),
+                    /** 8 */ $userWhere,
+                    /** 9 */ $grouping
                 );
             } else {
                 $sql = sprintf(
                     '
                       SELECT
-                        DATE_FORMAT(x.REQUESTED_AT, "%1$s:00") AS label,
-                        ROUND(%2$s(x.%3$s), 2) AS %3$s
+                        DATE_FORMAT(x.%1$s, "%2$s:00") AS label,
+                        ROUND(%3$s(x.%4$s), 2) AS %4$s
                       FROM
-                        %4$s x
+                        %5$s x
                       WHERE
-                        x.REQUESTED_AT BETWEEN "%5$s" AND "%6$s"
-                      GROUP BY DATE_FORMAT(x.REQUESTED_AT, "%1$s")
-                      ORDER BY x.REQUESTED_AT;
+                        x.%1$s BETWEEN "%6$s" AND "%7$s" %8$s
+                      GROUP BY DATE_FORMAT(x.%1$s, "%2$s")
+                      ORDER BY x.%1$s;
                     ',
-                    /** 1 */ '%d.%m %H',
-                    /** 2 */ Sql::$aggregates[$column['aggregate']],
-                    /** 3 */ $column['field'],
-                    /** 4 */ $column['table'],
-                    /** 5 */ $startDate->format('Y-m-d H:i:s'),
-                    /** 6 */ $endDate->format('Y-m-d H:i:s')
+                    /** 1 */ $column['timedBy'],
+                    /** 2 */ '%d.%m %H',
+                    /** 3 */ Sql::$aggregates[$column['aggregate']],
+                    /** 4 */ $column['field'],
+                    /** 5 */ $column['table'],
+                    /** 6 */ $startDate->format('Y-m-d H:i:s'),
+                    /** 7 */ $endDate->format('Y-m-d H:i:s'),
+                    /** 8 */ $userWhere
                 );
             }
 
@@ -322,5 +345,31 @@ class GraphController extends CController
         }
 
         return $grouping;
+    }
+
+    /**
+     * Forms the array containing the options for the pc-inspection data.
+     *
+     * @return array
+     */
+    private function getSystemInterfaceOptions()
+    {
+        $options = [
+            [
+                'name' => '',
+                'displayName' => 'PC_AVG_TYPING_SPEED',
+                'translated' => true,
+                'api' => 'PC',
+                'table' => InspectionDataSummary::TABLE_NAME,
+                'field' => InspectionDataSummary::FIELD_TYPING_SPEED,
+                'type' => self::TYPE_SYSTEM_DEFINED,
+                'mod' => self::MOD_PC_INSPECTOR,
+                'aggregate' => Sql::AGGREGATE_AVERAGE,
+                'timedBy' => 'startTime',
+                'unit' => '1 / s'
+            ]
+        ];
+
+        return $options;
     }
 }

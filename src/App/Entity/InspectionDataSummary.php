@@ -13,6 +13,9 @@ use Doctrine\ORM\Mapping\ManyToOne;
  */
 class InspectionDataSummary
 {
+    const TABLE_NAME         = 'inspection_data_summary';
+    const FIELD_TYPING_SPEED = 'typingSpeed';
+
     /**
      * @var int
      *
