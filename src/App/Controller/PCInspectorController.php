@@ -109,6 +109,7 @@ class PCInspectorController extends CController
             $item['mouseClicks'] = isset($item['mouseClicks']) ? $item['mouseClicks'] : [];
             $item['mousePath'] = isset($item['mousePath']) ? $item['mousePath'] : '';
             $item['common'] = isset($item['common']) ? $item['common'] : [];
+            $item['mouseTravelDistance'] = isset($item['mouseTravelDistance']) ? $item['mouseTravelDistance'] : 0;
 
             // Create keystroke entity
             $keyStroke = $this->createKeyStrokeEntity($item['keys'], $user, $startDateTime, $endDateTime);
@@ -137,7 +138,10 @@ class PCInspectorController extends CController
             $this->manager()->persist($mousePosition);
 
             $mousePath = $this->createMousePathEntity(
-                $item['mousePath'],
+                [
+                    'path' => $item['mousePath'],
+                    'dist' => $item['mouseTravelDistance']
+                ],
                 $user,
                 $startDateTime,
                 $endDateTime
@@ -333,7 +337,8 @@ class PCInspectorController extends CController
             ->setStartTime($start)
             ->setEndTime($end)
             ->setUser($user)
-            ->setPath($data)
+            ->setPath($data['path'])
+            ->setTotalDistance($data['dist'])
         ;
 
         return $mousePathEntity;
