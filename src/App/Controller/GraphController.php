@@ -414,7 +414,7 @@ class GraphController extends CController
                 'translated' => true,
                 'api' => 'PC',
                 'table' => InspectionDataSummary::TABLE_NAME,
-                'field' => InspectionDataSummary::FIELD_PASTE_PERCENTAGE,
+                'field' => InspectionDataSummary::FIELD_MOUSE_TRAVEL_DISTANCE,
                 'type' => self::TYPE_SYSTEM_DEFINED,
                 'mod' => self::MOD_PC_INSPECTOR,
                 'aggregate' => Sql::AGGREGATE_AVERAGE,
