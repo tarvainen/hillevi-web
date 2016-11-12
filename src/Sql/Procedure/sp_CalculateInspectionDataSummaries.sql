@@ -11,19 +11,21 @@ CREATE PROCEDURE sp_CalculateInspectionDataSummaries (
     SET @Interval = 10 * 60; -- 10 minutes (600 seconds)
 
     SELECT    COALESCE(StartDate, '1990-01-01'),
-      COALESCE(EndDate, '2036-01-01')
+              COALESCE(EndDate, '2036-01-01')
     INTO      StartDate,
-      EndDate;
+              EndDate;
 
     DROP TEMPORARY TABLE IF EXISTS tmp_data;
     CREATE TEMPORARY TABLE tmp_data (
-      UserId      INT           DEFAULT 0,
-      StartTime   DATETIME,
-      EndTime     DATETIME,
-      KeysTyped   INT           DEFAULT 0,
-      TypingSpeed DECIMAL(10,2) DEFAULT 0,
-      KeyCombos   INT           DEFAULT 0,
-      Pasted      BIGINT        DEFAULT 0
+      UserId               INT            DEFAULT 0,
+      StartTime            DATETIME,
+      EndTime              DATETIME,
+      KeysTyped            INT            DEFAULT 0,
+      TypingSpeed          DECIMAL(10,2)  DEFAULT 0,
+      KeyCombos            INT            DEFAULT 0,
+      Pasted               BIGINT         DEFAULT 0,
+      ActiveTimePercentage DECIMAL(10, 2) DEFAULT 0,
+      MouseTravelDistance  BIGINT         DEFAULT 0
     ) ENGINE = Memory;
 
     /** 1. Delete all existing data between the date range */
@@ -64,10 +66,35 @@ CREATE PROCEDURE sp_CalculateInspectionDataSummaries (
       WHERE       _combos.user_id = UserId
       GROUP BY    ROUND(UNIX_TIMESTAMP(_combos.startTime) / @Interval);
 
+    -- Active time
+    INSERT INTO tmp_data (
+      UserId, StartTime, EndTime, ActiveTimePercentage
+    )
+      SELECT    UserId,
+                MIN(_c.startTime),
+                MAX(_c.endTime),
+                SUM(_c.activeUsage) / (TIMESTAMPDIFF(SECOND, MIN(_c.startTime), MAX(_c.endTime)) * 1000)
+      FROM      computer_usage_snapshot _c
+      WHERE     _c.user_id = UserId
+      GROUP BY  ROUND(UNIX_TIMESTAMP(_c.startTime) / @Interval);
+
+    -- Mouse travel distance
+    INSERT INTO tmp_data (
+      UserId, StartTime, EndTime, MouseTravelDistance
+    )
+      SELECT    UserId,
+                MIN(x.startTime),
+                MAX(x.endTime),
+                SUM(x.totalDistance)
+      FROM      mouse_path x
+      WHERE     x.user_id = UserId
+      GROUP BY  ROUND(UNIX_TIMESTAMP(x.startTime) / @Interval);
+
     /** 3. Select all from temporary table to the real table */
 
     INSERT INTO inspection_data_summary (
-      user_id, startTime, endTime, keysTyped, typingSpeed, keyCombos, pasted
+      user_id, startTime, endTime, keysTyped, typingSpeed, keyCombos, pasted,
+      activityPercentage, pastePercentage, MouseTravelDistance
     )
       SELECT      t.UserId,
                   t.StartTime,
@@ -75,11 +102,16 @@ CREATE PROCEDURE sp_CalculateInspectionDataSummaries (
                   IFNULL(SUM(t.KeysTyped), 0),
                   IFNULL(SUM(t.TypingSpeed), 0),
                   IFNULL(SUM(t.KeyCombos), 0),
-                  IFNULL(SUM(t.Pasted), 0)
+                  IFNULL(SUM(t.Pasted), 0),
+                  IFNULL(SUM(t.ActiveTimePercentage), 0),
+                  IFNULL(SUM(t.Pasted) / SUM(t.KeysTyped), 0) * 100,
+                  IFNULL(SUM(t.MouseTravelDistance), 0)
       FROM        tmp_data t
       GROUP BY    t.UserId, t.StartTime;
 
     COMMIT;
+
+    SELECT * FROM tmp_data;
 
     SELECT * FROM inspection_data_summary;
 

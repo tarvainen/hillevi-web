@@ -360,7 +360,7 @@ class PCInspectorController extends CController
             ->setUser($user)
             ->setStartTime($start)
             ->setEndTime($end)
-            ->setActiveUsage($duration - $idle);
+            ->setActiveUsage($duration - $idle < 0 ? 0 : $duration - $idle);
 
         return $snapshot;
     }
