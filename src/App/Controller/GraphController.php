@@ -118,7 +118,7 @@ class GraphController extends CController
             $column = Json::decode($column);
 
             if ($column['type'] === self::TYPE_USER_DEFINED) {
-                $userDefinedColumns = $column;
+                $userDefinedColumns[] = $column;
             }
         }
 
@@ -177,12 +177,14 @@ class GraphController extends CController
                 $userWhere = 'AND 1';
             }
 
+            $multiplyBy = isset($column['multiplyBy']) ? $column['multiplyBy'] : 1;
+
             if ($groupBy !== '%d.%m %k') {
                 $sql = sprintf(
                     '
                       SELECT
                         DATE_FORMAT(T.FULLDATE, "%1$s") AS label,
-                        ROUND(%2$s(x.%3$s), 2) AS %3$s
+                        ROUND(%2$s(x.%3$s) * %10$s, 2) AS %3$s
                       FROM
                         TIME_DIMENSION T
                       CROSS JOIN %4$s x ON DATE(x.%5$s) = T.FULLDATE 
@@ -199,14 +201,15 @@ class GraphController extends CController
                     /** 6 */ $startDate->format('Y-m-d'),
                     /** 7 */ $endDate->format('Y-m-d'),
                     /** 8 */ $userWhere,
-                    /** 9 */ $grouping
+                    /** 9 */ $grouping,
+                    /** 10 */ $multiplyBy
                 );
             } else {
                 $sql = sprintf(
                     '
                       SELECT
                         DATE_FORMAT(x.%1$s, "%2$s:00") AS label,
-                        ROUND(%3$s(x.%4$s), 2) AS %4$s
+                        ROUND(%3$s(x.%4$s) * %9$s, 2) AS %4$s
                       FROM
                         %5$s x
                       WHERE
@@ -221,9 +224,12 @@ class GraphController extends CController
                     /** 5 */ $column['table'],
                     /** 6 */ $startDate->format('Y-m-d H:i:s'),
                     /** 7 */ $endDate->format('Y-m-d H:i:s'),
-                    /** 8 */ $userWhere
+                    /** 8 */ $userWhere,
+                    /** 9 */ $multiplyBy
                 );
             }
+
+            Logger::log($sql);
 
             /**
              * @var PDOStatement $stmt
@@ -377,6 +383,46 @@ class GraphController extends CController
                 'aggregate' => Sql::AGGREGATE_AVERAGE,
                 'timedBy' => 'startTime',
                 'unit' => '1 / s'
+            ],
+            [
+                'name' => '',
+                'displayName' => 'PC_ACTIVITY_PERCENTAGE',
+                'translated' => true,
+                'api' => 'PC',
+                'table' => InspectionDataSummary::TABLE_NAME,
+                'field' => InspectionDataSummary::FIELD_ACTIVITY_PERCENTAGE,
+                'type' => self::TYPE_SYSTEM_DEFINED,
+                'mod' => self::MOD_PC_INSPECTOR,
+                'aggregate' => Sql::AGGREGATE_AVERAGE,
+                'timedBy' => 'startTime',
+                'unit' => '%'
+            ],
+            [
+                'name' => '',
+                'displayName' => 'PC_COPY_PASTE_RATIO',
+                'translated' => true,
+                'api' => 'PC',
+                'table' => InspectionDataSummary::TABLE_NAME,
+                'field' => InspectionDataSummary::FIELD_PASTE_PERCENTAGE,
+                'type' => self::TYPE_SYSTEM_DEFINED,
+                'mod' => self::MOD_PC_INSPECTOR,
+                'aggregate' => Sql::AGGREGATE_AVERAGE,
+                'timedBy' => 'startTime',
+                'unit' => '%'
+            ],
+            [
+                'name' => '',
+                'displayName' => 'PC_MOUSE_TRAVEL_DISTANCE_KPX',
+                'translated' => true,
+                'api' => 'PC',
+                'table' => InspectionDataSummary::TABLE_NAME,
+                'field' => InspectionDataSummary::FIELD_PASTE_PERCENTAGE,
+                'type' => self::TYPE_SYSTEM_DEFINED,
+                'mod' => self::MOD_PC_INSPECTOR,
+                'aggregate' => Sql::AGGREGATE_AVERAGE,
+                'timedBy' => 'startTime',
+                'multiplyBy' => 0.001,
+                'unit' => 'px'
             ]
         ];
 

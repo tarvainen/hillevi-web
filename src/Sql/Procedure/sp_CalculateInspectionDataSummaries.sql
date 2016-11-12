@@ -73,7 +73,7 @@ CREATE PROCEDURE sp_CalculateInspectionDataSummaries (
       SELECT    UserId,
                 MIN(_c.startTime),
                 MAX(_c.endTime),
-                SUM(_c.activeUsage) / (TIMESTAMPDIFF(SECOND, MIN(_c.startTime), MAX(_c.endTime)) * 1000)
+                SUM(_c.activeUsage) / (TIMESTAMPDIFF(SECOND, MIN(_c.startTime), MAX(_c.endTime)) * 1000) * 100
       FROM      computer_usage_snapshot _c
       WHERE     _c.user_id = UserId
       GROUP BY  ROUND(UNIX_TIMESTAMP(_c.startTime) / @Interval);

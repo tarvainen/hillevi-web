@@ -13,8 +13,11 @@ use Doctrine\ORM\Mapping\ManyToOne;
  */
 class InspectionDataSummary
 {
-    const TABLE_NAME         = 'inspection_data_summary';
-    const FIELD_TYPING_SPEED = 'typingSpeed';
+    const TABLE_NAME                  = 'inspection_data_summary';
+    const FIELD_TYPING_SPEED          = 'typingSpeed';
+    const FIELD_ACTIVITY_PERCENTAGE   = 'activityPercentage';
+    const FIELD_PASTE_PERCENTAGE      = 'pastePercentage';
+    const FIELD_MOUSE_TRAVEL_DISTANCE = 'mouseTravelDistance';
 
     /**
      * @var int
