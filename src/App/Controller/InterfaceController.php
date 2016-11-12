@@ -7,7 +7,9 @@ use App\Exception\ActionFailedException;
 use App\Exception\NotFoundException;
 use App\Naming\ApiType;
 use App\Naming\FieldType;
+use App\Util\Curl;
 use App\Util\FieldFormatter;
+use App\Util\Json;
 use App\Util\Sql;
 use Doctrine\DBAL\Driver\PDOStatement;
 use Doctrine\ORM\EntityManager;
@@ -28,6 +30,25 @@ use App\Annotation\Permission;
  */
 class InterfaceController extends CController
 {
+    /**
+     * Action to test if the given url is working or not.
+     *
+     * @Permission
+     *
+     * @Route("test")
+     * @Method("POST")
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function testAction(Request $request)
+    {
+        $data = Curl::read($request->get('url', ''));
+
+        return new JsonResponse(Json::decode($data));
+    }
+
     /**
      * Returns a list of all available interfaces for current user.
      *
