@@ -229,8 +229,6 @@ class GraphController extends CController
                 );
             }
 
-            Logger::log($sql);
-
             /**
              * @var PDOStatement $stmt
              */
