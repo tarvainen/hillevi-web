@@ -112,21 +112,31 @@ class GraphController extends CController
             throw new ActionFailedException('GetData');
         }
 
+        $userDefinedColumns = [];
+
         foreach ($columns as &$column) {
             $column = Json::decode($column);
+
+            if ($column['type'] === self::TYPE_USER_DEFINED) {
+                $userDefinedColumns = $column;
+            }
         }
 
-        // Check that current user has rights to all of the defined columns
-        $api = $this->manager()->getRepository('App:ApiReader')
-            ->findOneBy(
-                [
-                    'table' => Arrays::map($columns, 'table'),
-                    'owner' => $this->getUserEntity()->getId()
-                ]
-            );
+        if (!empty($userDefinedColumns)) {
+            // Check that current user has rights to all of the defined columns
+            $api = $this
+                ->manager()
+                ->getRepository('App:ApiReader')
+                ->findOneBy(
+                    [
+                        'table' => Arrays::map($userDefinedColumns, 'table'),
+                        'owner' => $this->getUserEntity()->getId()
+                    ]
+                );
 
-        if (!$api) {
-            throw new ActionFailedException('GetData');
+            if (!$api) {
+                throw new ActionFailedException('GetData');
+            }
         }
 
         $start = new \DateTime($startDate);
