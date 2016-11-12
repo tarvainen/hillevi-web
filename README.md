@@ -34,7 +34,7 @@ You have to install also few modules to make Hillevi run correctly.
 1. Install composer ``apt install composer``
 2. Run ``composer install`` in the application root directory to install all the dependencies
 3. Run ``sudo bash init.sh --phrase=yourownsecretphraseforkeyphrase`` to configure the application
-4. Run ``bash bin/create_database.sh`` to initialize your database with some data fixtures
+4. Run ``bash bin/create_database.sh`` to initialize your database with some data fixtures and migrations
 5. Run ``php bin/console server:start`` to launch your server
 
 TODO: improve the installation guide
