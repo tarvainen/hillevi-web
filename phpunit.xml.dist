@@ -6,9 +6,12 @@
          backupGlobals="false"
          colors="true"
          bootstrap="app/autoload.php"
+         convertErrorsToExceptions="true"
+         convertNoticesToExceptions="true"
+         convertWarningsToExceptions="true"
 >
     <php>
-        <ini name="error_reporting" value="-16385"/>
+        <ini name="error_reporting" value="-1" />
         <server name="KERNEL_DIR" value="app/" />
     </php>
 
