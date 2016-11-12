@@ -162,13 +162,13 @@ class GraphController extends CController
                   GROUP BY %7$s
                   ORDER BY T.FULLDATE;
                 ',
-                    /** 1 */ $groupBy,
-                    /** 2 */ Sql::$aggregates[$column['aggregate']],
-                    /** 3 */ $column['field'],
-                    /** 4 */ $column['table'],
-                    /** 5 */ $startDate->format('Y-m-d'),
-                    /** 6 */ $endDate->format('Y-m-d'),
-                    /** 7 */ $grouping
+                /** 1 */ $groupBy,
+                /** 2 */ Sql::$aggregates[$column['aggregate']],
+                /** 3 */ $column['field'],
+                /** 4 */ $column['table'],
+                /** 5 */ $startDate->format('Y-m-d'),
+                /** 6 */ $endDate->format('Y-m-d'),
+                /** 7 */ $grouping
                 );
             } else {
                 $sql = sprintf(

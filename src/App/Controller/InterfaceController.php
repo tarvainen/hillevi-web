@@ -154,9 +154,7 @@ class InterfaceController extends CController
         $em->remove($api);
 
         $sql = sprintf(
-            '
-              DROP TABLE IF EXISTS %1$s
-            ',
+            'DROP TABLE IF EXISTS %1$s',
             /** 1 */ $api->getTableName()
         );
 
