@@ -44,6 +44,13 @@ class MousePath
     private $path;
 
     /**
+     * @var float
+     *
+     * @ORM\Column(name="totalDistance", type="decimal", precision=17, scale=2)
+     */
+    private $totalDistance;
+
+    /**
      * @var User
      *
      * @ManyToOne(targetEntity="User")
@@ -155,6 +162,30 @@ class MousePath
     public function getPath()
     {
         return $this->path;
+    }
+
+    /**
+     * Set total distance
+     *
+     * @param float $totalDistance
+     *
+     * @return MousePath
+     */
+    public function setTotalDistance($totalDistance)
+    {
+        $this->totalDistance = $totalDistance;
+
+        return $this;
+    }
+
+    /**
+     * Get total distance
+     *
+     * @return float
+     */
+    public function getTotalDistance()
+    {
+        return $this->totalDistance;
     }
 }
 
