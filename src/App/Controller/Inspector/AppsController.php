@@ -5,6 +5,7 @@ namespace App\Controller\Inspector;
 use App\Controller\CController;
 use App\Exception\ActionFailedException;
 use App\Util\DateUtil;
+use App\Util\Formatter;
 use Doctrine\DBAL\Statement;
 use Doctrine\ORM\Query;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -151,7 +152,7 @@ class AppsController extends CController
         $labels = [];
 
         for ($i = 0; $i < 24; $i++) {
-            $labels[] = $i < 10 ? '0' . $i : $i;
+            $labels[] = Formatter::toPadded($i);
         }
 
         $result = $this->formatUsageChartData($apps, $labels, $data);
@@ -220,7 +221,7 @@ class AppsController extends CController
         }
 
         foreach ($data as $item) {
-            $hour = (int)($item['hour']) < 10 ? '0' . $item['hour'] : $item['hour'];
+            $hour = Formatter::toPadded($item['hour']);
             $tmp[$item['name']][$hour] = (int)$item['activeTime'];
         }
 

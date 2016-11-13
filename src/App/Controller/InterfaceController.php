@@ -233,49 +233,6 @@ class InterfaceController extends CController
     }
 
     /**
-     * Action to fetch all possible interface field types.
-     *
-     * @Permission("interface:create")
-     *
-     * @Route("fields/types")
-     * @Method("POST")
-     *
-     * @return JsonResponse
-     */
-    public function getInterfaceFieldTypesAction()
-    {
-        $types = [
-            FieldType::INTEGER,
-            FieldType::DECIMAL,
-            FieldType::STRING,
-            FieldType::DATETIME
-        ];
-
-        return new JsonResponse($types);
-    }
-
-    /**
-     * Action to fetch all possible interface types.
-     *
-     * @Permission("interface:own:write")
-     *
-     * @Route("types")
-     * @Method("POST")
-     *
-     * @return JsonResponse
-     */
-    public function getInterfaceTypesAction()
-    {
-        $types = [
-            ApiType::INNER,
-            ApiType::JSON,
-            ApiType::XML
-        ];
-
-        return new JsonResponse($types);
-    }
-
-    /**
      * Route for fetching data from the specified interface.
      *
      * @param Request $request

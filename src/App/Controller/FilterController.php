@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Naming\ApiType;
+use App\Naming\FieldType;
 use App\Util\Sql;
 use Doctrine\DBAL\Statement;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -251,5 +253,48 @@ class FilterController extends CController
         $data = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
         return new JsonResponse($data);
+    }
+
+    /**
+     * Action to fetch all possible interface field types.
+     *
+     * @Permission
+     *
+     * @Route("type/field")
+     * @Method("POST")
+     *
+     * @return JsonResponse
+     */
+    public function getInterfaceFieldTypesAction()
+    {
+        $types = [
+            FieldType::INTEGER,
+            FieldType::DECIMAL,
+            FieldType::STRING,
+            FieldType::DATETIME
+        ];
+
+        return new JsonResponse($types);
+    }
+
+    /**
+     * Action to fetch all possible interface types.
+     *
+     * @Permission
+     *
+     * @Route("type/api")
+     * @Method("POST")
+     *
+     * @return JsonResponse
+     */
+    public function getInterfaceTypesAction()
+    {
+        $types = [
+            ApiType::INNER,
+            ApiType::JSON,
+            ApiType::XML
+        ];
+
+        return new JsonResponse($types);
     }
 }
