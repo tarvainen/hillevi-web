@@ -1,6 +1,11 @@
 imports:
     - { resource: config_dev.yml }
 
+# Doctrine Configuration
+doctrine:
+    dbal:
+        dbname:   "%database_name%_test"
+
 framework:
     test: ~
     session:
