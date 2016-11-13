@@ -29,7 +29,7 @@ class PermissionController extends CController
     /**
      * Action to fetch list of available permissions.
      *
-     * @Permission
+     * @Permission("appsetting:permissions:read")
      *
      * @Route("find")
      * @Method("POST")
@@ -53,7 +53,7 @@ class PermissionController extends CController
     /**
      * Action to fetch the permissions for the requested users.
      *
-     * @Permission
+     * @Permission("appsetting:permissions:read")
      *
      * @Route("users")
      * @Method("POST")
@@ -99,7 +99,7 @@ class PermissionController extends CController
     /**
      * Action to save user's permissions.
      *
-     * @Permission
+     * @Permission("appsetting:permissions:write")
      *
      * @Route("save")
      * @Method("POST")

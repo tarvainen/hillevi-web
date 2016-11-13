@@ -33,7 +33,7 @@ class InterfaceController extends CController
     /**
      * Action to test if the given url is working or not.
      *
-     * @Permission
+     * @Permission("interface:own:write")
      *
      * @Route("test")
      * @Method("POST")
@@ -52,7 +52,7 @@ class InterfaceController extends CController
     /**
      * Returns a list of all available interfaces for current user.
      *
-     * @Permission("perm=interface")
+     * @Permission("interface:own:read")
      *
      * @Route("all")
      * @Method("POST")
@@ -77,7 +77,7 @@ class InterfaceController extends CController
     /**
      * The route for creating new interface.
      *
-     * @Permission("perm=interface:create")
+     * @Permission("interface:own:write")
      *
      * @Route("create")
      * @Method("POST")
@@ -151,7 +151,7 @@ class InterfaceController extends CController
     /**
      * Route to delete an interface.
      *
-     * @Permission("perm=interface:delete")
+     * @Permission("interface:own:write")
      *
      * @Route("delete/{id}")
      * @Method("POST")
@@ -192,7 +192,7 @@ class InterfaceController extends CController
     /**
      * Route for updating interfaces information.
      *
-     * @Permission("perm=interface:create")
+     * @Permission("interface:own:write")
      *
      * @Route("update", requirements={"id": "\d+"})
      * @Method("POST")
@@ -235,6 +235,8 @@ class InterfaceController extends CController
     /**
      * Action to fetch all possible interface field types.
      *
+     * @Permission("interface:create")
+     *
      * @Route("fields/types")
      * @Method("POST")
      *
@@ -254,6 +256,8 @@ class InterfaceController extends CController
 
     /**
      * Action to fetch all possible interface types.
+     *
+     * @Permission("interface:own:write")
      *
      * @Route("types")
      * @Method("POST")
@@ -276,7 +280,7 @@ class InterfaceController extends CController
      *
      * @param Request $request
      *
-     * @Permission("perm=interface:create")
+     * @Permission("interface:own:read")
      *
      * @Route("data")
      * @Method("POST")
@@ -292,12 +296,12 @@ class InterfaceController extends CController
         /**
          * @var ApiReader $api
          */
-        $api = $em->getRepository('App:ApiReader')->findOneBy(
-            [
+        $api = $em
+            ->getRepository('App:ApiReader')
+            ->findOneBy([
                 'id' => (int)$id,
                 'owner' => $this->getUserEntity()->getId()
-            ]
-        );
+            ]);
 
         $sql = sprintf(
             '
@@ -321,7 +325,7 @@ class InterfaceController extends CController
      *
      * @param Request $request
      *
-     * @Permission("perm=interface:create")
+     * @Permission("interface:own:read")
      *
      * @Route("schema")
      * @Method("POST")
@@ -349,7 +353,7 @@ class InterfaceController extends CController
     /**
      * A route for removing api rows.
      *
-     * @Permission("interface:create")
+     * @Permission("interface:own:write")
      *
      * @Route("data/rows/remove")
      * @Method("POST")
@@ -363,7 +367,6 @@ class InterfaceController extends CController
         list($id, $rowIds) = $this->mapFromRequest(['id', 'rows']);
 
         $rows = explode(',', $rowIds);
-
         $rows = array_map('intval', $rows);
 
         $em = $this->getDoctrine()->getManager();
@@ -396,7 +399,7 @@ class InterfaceController extends CController
     /**
      * A route for adding api rows.
      *
-     * @Permission("interface:create")
+     * @Permission("interface:own:write")
      *
      * @Route("data/rows/add")
      * @Method("POST")
@@ -415,12 +418,10 @@ class InterfaceController extends CController
         $api = $this
             ->manager()
             ->getRepository('App:ApiReader')
-            ->findOneBy(
-                [
-                    'id' => $apiId,
-                    'owner' => $this->getUserEntity()->getId()
-                ]
-            );
+            ->findOneBy([
+                'id' => $apiId,
+                'owner' => $this->getUserEntity()->getId()
+            ]);
 
         if (!$api) {
             throw new ActionFailedException('save');
@@ -434,9 +435,7 @@ class InterfaceController extends CController
         };
 
         $sql = sprintf(
-            '
-              INSERT INTO %1$s (%2$s) VALUES (%3$s);
-            ',
+            'INSERT INTO %1$s (%2$s) VALUES (%3$s)',
             /** 1 */ $api->getTableName(),
             /** 2 */ implode(',', array_keys($values)),
             /** 3 */ implode(',', array_map($parametrize, array_keys($values)))
@@ -452,7 +451,7 @@ class InterfaceController extends CController
          * @var PDOStatement $stmt
          */
         $stmt = $this->getDoctrine()->getConnection()->prepare($sql);
-        $data = $stmt->execute($bindings);
+        $stmt->execute($bindings);
 
         return new JsonResponse('OK');
     }

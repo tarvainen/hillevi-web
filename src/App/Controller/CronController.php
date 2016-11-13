@@ -8,6 +8,7 @@ use Cron\CronBundle\Entity\CronJob;
 use JMS\Serializer\SerializerBuilder;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use App\Annotation\Permission;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -22,6 +23,8 @@ class CronController extends CController
 {
     /**
      * Returns a list of all available crons.
+     *
+     * @Permission("cron:read")
      *
      * @Route("api/cron/all")
      * @Method("POST")
@@ -49,7 +52,7 @@ class CronController extends CController
     /**
      * Adds a new cron to the scheduler.
      *
-     * TODO: Improve this!! This is just a test.
+     * @Permission("cron:write")
      *
      * @Route("api/cron/add")
      * @Method("POST")

@@ -29,7 +29,7 @@ class UsersController extends CController
     /**
      * Action to find all users.
      *
-     * @Permission
+     * @Permission("appsetting:users:read")
      *
      * @Route("find/{id}")
      * @Method("POST")
@@ -60,7 +60,7 @@ class UsersController extends CController
     /**
      * Action to save user.
      *
-     * @Permission
+     * @Permission("appsetting:users:write")
      *
      * @Route("save")
      * @Method("POST")
@@ -106,7 +106,7 @@ class UsersController extends CController
     /**
      * Action for deleting the user.
      *
-     * @Permission
+     * @Permission("appsetting:users:write")
      *
      * @Route("delete/{id}")
      * @Method("POST")

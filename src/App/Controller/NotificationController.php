@@ -29,7 +29,7 @@ class NotificationController extends CController
      * @Route("latest/{amount}")
      * @Method("POST")
      *
-     * @Permission("notification")
+     * @Permission("notification:all")
      *
      * @return Response
      */
@@ -39,12 +39,10 @@ class NotificationController extends CController
             ->getDoctrine()
             ->getManager()
             ->getRepository('App:Notification')
-            ->findBy(
-                [
-                    'user' => $this->getUserEntity()->getId(),
-                    'dismissed' => false
-                ]
-            );
+            ->findBy([
+                'user' => $this->getUserEntity()->getId(),
+                'dismissed' => false
+            ]);
 
         return new Response(
             $this->serializer->serialize(
@@ -61,7 +59,7 @@ class NotificationController extends CController
      * @Route("dismiss")
      * @Method("POST")
      *
-     * @Permission("notification")
+     * @Permission("notification:all")
      *
      * @param Request $request
      *
@@ -73,12 +71,12 @@ class NotificationController extends CController
          * @var EntityManager $em
          */
         $em = $this->getDoctrine()->getManager();
-        $notifications = $em->getRepository('App:Notification')->findBy(
-            [
+        $notifications = $em
+            ->getRepository('App:Notification')
+            ->findBy([
                 'user' => $this->getUserEntity()->getId(),
                 'id' => $request->get('id', [])
-            ]
-        );
+            ]);
 
         foreach ($notifications as $notification) {
             /** @var Notification $notification */

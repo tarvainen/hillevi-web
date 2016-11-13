@@ -25,7 +25,7 @@ class SettingsController extends CController
     /**
      * Returns the users custom application settings.
      *
-     * @Permission
+     * @Permission("usersettings:application")
      *
      * @Route("all")
      * @Method("POST")
@@ -42,7 +42,7 @@ class SettingsController extends CController
     /**
      * Saves the app setting data for the user.
      *
-     * @Permission
+     * @Permission("usersettings:application")
      *
      * @Route("save")
      * @Method("POST")
@@ -69,6 +69,8 @@ class SettingsController extends CController
 
     /**
      * Action for fetching search settings for action.
+     *
+     * @Permission
      *
      * @param string  $action
      * @param Request $request
@@ -102,6 +104,8 @@ class SettingsController extends CController
 
     /**
      * Action for saving search settings for action.
+     *
+     * @Permission
      *
      * @param string  $action
      * @param Request $request
@@ -146,6 +150,8 @@ class SettingsController extends CController
 
     /**
      * Action for removing saved settings.
+     *
+     * @Permission
      *
      * @Route("search/{action}/delete")
      * @Method("POST")

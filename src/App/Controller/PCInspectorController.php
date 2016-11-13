@@ -18,7 +18,11 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * Controller for the Hillevi PC inspector add-on.
+ * Controller for the Hillevi Sniffer add-on.
+ *
+ * NOTE: This controller does NOT use the Permission-annotation to check user's
+ * permissions because there won't be any jwt. Only the api token is passed as
+ * authorization header.
  *
  * @author Atte Tarvainen <atte.tarvainen@pp1.inet.fi>
  *
@@ -47,14 +51,13 @@ class PCInspectorController extends CController
             throw new ActionFailedException('auth');
         }
 
+        // Find user with the token
         $user = $this
             ->manager()
             ->getRepository('App:User')
-            ->findOneBy(
-                [
-                    'apiKey' => $token
-                ]
-            );
+            ->findOneBy([
+                'apiKey' => $token
+            ]);
 
         if (!$user) {
             throw new ActionFailedException('auth');
@@ -81,14 +84,13 @@ class PCInspectorController extends CController
             throw new ActionFailedException('auth');
         }
 
+        // Find user with the token
         $user = $this
             ->manager()
             ->getRepository('App:User')
-            ->findOneBy(
-                [
-                    'apiKey' => $token
-                ]
-            );
+            ->findOneBy([
+                'apiKey' => $token
+            ]);
 
         if (!$user) {
             throw new ActionFailedException('auth');
@@ -97,18 +99,19 @@ class PCInspectorController extends CController
         $data = $request->get('data', []);
 
         // The data may contain multiple read arrays of data. Loop them!
+        // TODO: refactor this, this is such a hassle here
         foreach ($data as $item) {
             $startDateTime = \DateTime::createFromFormat('d.m.Y H:i:s', $item['time']['start']);
             $endDateTime = \DateTime::createFromFormat('d.m.Y H:i:s', $item['time']['end']);
 
             // Pre-format data and validate that we don't use something which is not set
-            $item['keys'] = array_map('intval', isset($item['keys']) ? $item['keys'] : []);
-            $item['keyCombos'] = isset($item['keyCombos']) ? $item['keyCombos'] : [];
-            $item['mousePosition'] = isset($item['mousePosition']) ? $item['mousePosition'] : [];
-            $item['screen'] = isset($item['screen']) ? $item['screen'] : [];
-            $item['mouseClicks'] = isset($item['mouseClicks']) ? $item['mouseClicks'] : [];
-            $item['mousePath'] = isset($item['mousePath']) ? $item['mousePath'] : '';
-            $item['common'] = isset($item['common']) ? $item['common'] : [];
+            $item['keys']                = array_map('intval', isset($item['keys']) ? $item['keys'] : []);
+            $item['keyCombos']           = isset($item['keyCombos']) ? $item['keyCombos'] : [];
+            $item['mousePosition']       = isset($item['mousePosition']) ? $item['mousePosition'] : [];
+            $item['screen']              = isset($item['screen']) ? $item['screen'] : [];
+            $item['mouseClicks']         = isset($item['mouseClicks']) ? $item['mouseClicks'] : [];
+            $item['mousePath']           = isset($item['mousePath']) ? $item['mousePath'] : '';
+            $item['common']              = isset($item['common']) ? $item['common'] : [];
             $item['mouseTravelDistance'] = isset($item['mouseTravelDistance']) ? $item['mouseTravelDistance'] : 0;
 
             // Create keystroke entity
@@ -179,6 +182,7 @@ class PCInspectorController extends CController
 
         }
 
+        // After all write the data to the database
         $this->manager()->flush();
 
         return new JsonResponse('OK');
@@ -365,7 +369,8 @@ class PCInspectorController extends CController
             ->setUser($user)
             ->setStartTime($start)
             ->setEndTime($end)
-            ->setActiveUsage($duration - $idle < 0 ? 0 : $duration - $idle);
+            ->setActiveUsage($duration - $idle < 0 ? 0 : $duration - $idle)
+        ;
 
         return $snapshot;
     }

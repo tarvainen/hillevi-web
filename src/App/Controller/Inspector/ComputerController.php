@@ -78,10 +78,8 @@ class ComputerController extends CController
 
         $data = $stmt->fetch(\PDO::FETCH_COLUMN);
 
-        return new JsonResponse(
-            [
-                'percentage' => $data
-            ]
-        );
+        return new JsonResponse([
+            'percentage' => $data
+        ]);
     }
 }

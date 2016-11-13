@@ -111,6 +111,7 @@ class MouseController extends CController
             }
         }
 
+        // Write to the output
         ob_start();
         imagejpeg($image, NULL, 100);
 

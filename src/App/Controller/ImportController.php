@@ -8,9 +8,9 @@ use App\Naming\FieldType;
 use App\Util\Arrays;
 use App\Util\Sql;
 use Doctrine\DBAL\Connection;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use App\Annotation\Permission;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -28,6 +28,8 @@ class ImportController extends CController
 {
     /**
      * Action for importing data to specific api.
+     *
+     * @Permission("import:execute")
      *
      * @param string  $id
      * @param string  $token

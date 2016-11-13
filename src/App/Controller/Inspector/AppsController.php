@@ -19,6 +19,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
  *
  * @Route("api/inspector/apps/")
  * @Method("POST")
+ *
+ * @author Atte Tarvainen <atte.tarvainen@pp1.inet.fi>
  */
 class AppsController extends CController
 {
@@ -74,9 +76,7 @@ class AppsController extends CController
             ->setParameter('endTime', $endDate->format(DateUtil::DATETIME_DB))
         ;
 
-        $result = $query->getArrayResult();
-
-        return new JsonResponse($result);
+        return new JsonResponse($query->getArrayResult());
     }
 
     /**

@@ -95,7 +95,6 @@ class KeyboardController extends CController
 
         $data['keyCombos'] = $query->getArrayResult();
 
-
         return new JsonResponse($data);
     }
 
@@ -241,6 +240,8 @@ class KeyboardController extends CController
 
     /**
      * Action for fetching typing speed for the dashboard widget.
+     *
+     * @Permission
      *
      * @Route("typing/speed")
      * @Method("POST")

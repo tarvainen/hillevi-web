@@ -40,7 +40,7 @@ class GraphController extends CController
      * @Route("columns/all")
      * @Method("POST")
      *
-     * @Permission("graph")
+     * @Permission
      *
      * @return JsonResponse
      */
@@ -94,6 +94,8 @@ class GraphController extends CController
 
     /**
      * Action to fetch chart data.
+     *
+     * @Permission
      *
      * @param Request $request
      *
