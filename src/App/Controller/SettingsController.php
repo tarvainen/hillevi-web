@@ -25,7 +25,7 @@ class SettingsController extends CController
     /**
      * Returns the users custom application settings.
      *
-     * @Permission("usersettings:application")
+     * @Permission("usersettings")
      *
      * @Route("all")
      * @Method("POST")
@@ -42,7 +42,7 @@ class SettingsController extends CController
     /**
      * Saves the app setting data for the user.
      *
-     * @Permission("usersettings:application")
+     * @Permission("usersettings")
      *
      * @Route("save")
      * @Method("POST")

@@ -57,7 +57,7 @@ class AuthController extends CController
     /**
      * Returns the user's settings.
      *
-     * @Permission
+     * @Permission("usersettings")
      *
      * @Route("settings")
      * @Method("POST")
@@ -85,7 +85,7 @@ class AuthController extends CController
     /**
      * Updates the user's settings.
      *
-     * @Permission
+     * @Permission("usersettings")
      *
      * @Route("settings/save")
      * @Method("POST")
@@ -112,7 +112,7 @@ class AuthController extends CController
      *
      * @param Request $request
      *
-     * @Permission
+     * @Permission("usersettings")
      *
      * @Route("settings/password/check")
      * @Method("POST")
