@@ -44,7 +44,14 @@ class InterfaceController extends CController
      */
     public function testAction(Request $request)
     {
-        $data = Curl::read($request->get('url', ''));
+        $url = $request->get('url', '');
+
+        // Prevent self-request loop
+        if (strpos($url, 'api/interface/test')) {
+            throw new ActionFailedException('Can\'t request myself.');
+        }
+
+        $data = Curl::read($url);
 
         return new JsonResponse(Json::decode($data));
     }
