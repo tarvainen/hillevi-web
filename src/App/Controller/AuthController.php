@@ -193,11 +193,14 @@ class AuthController extends CController
                 'alg' => 'RS256'
             ));
 
+            $expiration = new \DateTime('tomorrow');
+
             /**
              * Set JWT data here.
              */
             $jws->setPayload(array(
                 'uid' => $user->getId(),
+                'exp' => $expiration->format('U')
             ));
 
             $privateKey = $this->getPrivateKey();
