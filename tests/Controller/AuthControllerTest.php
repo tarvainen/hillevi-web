@@ -24,12 +24,10 @@ class AuthControllerTest extends ApiTestCase
     {
         $response = $this
             ->route('/api/auth/login')
-            ->parameters(
-                [
-                    'username' => $username,
-                    'password' => $password
-                ]
-            )
+            ->parameters([
+                'username' => $username,
+                'password' => $password
+            ])
             ->execute();
 
         $this->assertEquals(200, $response->getStatusCode());
@@ -47,12 +45,10 @@ class AuthControllerTest extends ApiTestCase
     {
         $response = $this
             ->route('/api/auth/login')
-            ->parameters(
-                [
-                    'username' => $username,
-                    'password' => $password
-                ]
-            )
+            ->parameters([
+                'username' => $username,
+                'password' => $password
+            ])
             ->execute();
 
         $this->assertEquals(500, $response->getStatusCode());
@@ -92,11 +88,9 @@ class AuthControllerTest extends ApiTestCase
         $user = Json::decode(
             $this
                 ->route('/api/auth/me')
-                ->headers(
-                    [
+                ->headers([
                         'HTTP_AUTHORIZATION' => $jwt
-                    ]
-                )
+                ])
                 ->execute()
                 ->getContent()
         );
@@ -116,11 +110,9 @@ class AuthControllerTest extends ApiTestCase
     {
         $response = $this
             ->route('/api/auth/me')
-            ->headers(
-                [
-                    'HTTP_AUTHORIZATION' => md5(rand(0, 100) . $username . $password)
-                ]
-            )
+            ->headers([
+                'HTTP_AUTHORIZATION' => md5(rand(0, 100) . $username . $password)
+            ])
             ->execute();
 
         $this->assertEquals(401, $response->getStatusCode());
@@ -141,18 +133,14 @@ class AuthControllerTest extends ApiTestCase
 
         $response = $this
             ->route('/api/auth/settings/password/change')
-            ->parameters(
-                [
-                    'oldPassword' => $oldPassword,
-                    'newPassword' => $newPassword,
-                    'newPasswordAgain' => $newPassword
-                ]
-            )
-            ->headers(
-                [
-                    'HTTP_AUTHORIZATION' => $jwt
-                ]
-            )
+            ->parameters([
+                'oldPassword' => $oldPassword,
+                'newPassword' => $newPassword,
+                'newPasswordAgain' => $newPassword
+            ])
+            ->headers([
+                'HTTP_AUTHORIZATION' => $jwt
+            ])
             ->execute();
 
         $this->assertEquals(200, $response->getStatusCode());
@@ -241,12 +229,10 @@ class AuthControllerTest extends ApiTestCase
     private function getAuthToken($username, $password)
     {
         return $this->route('/api/auth/login')
-            ->parameters(
-                [
-                    'username' => $username,
-                    'password' => $password
-                ]
-            )
+            ->parameters([
+                'username' => $username,
+                'password' => $password
+            ])
             ->execute()
             ->getContent();
     }
