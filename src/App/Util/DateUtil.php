@@ -15,6 +15,10 @@ class DateUtil
     const DATETIME_DB = 'Y-m-d H:i:s';
     const DATE_DB     = 'Y-m-d';
 
+    /** Let's use these as default for 'no range' selects */
+    const SMALL_ENOUGH = '1900-01-01';
+    const BIG_ENOUGH   = '2036-01-01';
+
     /**
      * Validate the input datetime so this will return always a datetime object.
      *
@@ -30,7 +34,11 @@ class DateUtil
                 return $dateTime;
             }
 
-            return new \DateTime($dateTime);
+            try {
+                return new \DateTime($dateTime);
+            } catch (\Exception $e) {
+                // to fallback
+            }
         }
 
         if (!is_null($fallback)) {
