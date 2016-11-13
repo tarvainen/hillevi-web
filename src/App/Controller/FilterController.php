@@ -221,23 +221,6 @@ class FilterController extends CController
     }
 
     /**
-     * Action for fetching saved search settings for trend chart.
-     *
-     * @Permission
-     *
-     * @Route("setting/trend")
-     * @Method("POST")
-     *
-     * @return JsonResponse
-     */
-    public function getTrendSearchSettingAction()
-    {
-        $result = [];
-
-        return new JsonResponse($result);
-    }
-
-    /**
      * Action to fetch users to the dropdown lists.
      *
      * @Permission
