@@ -6,13 +6,17 @@
          backupGlobals="false"
          colors="true"
          bootstrap="app/autoload.php"
-         convertErrorsToExceptions="true"
-         convertNoticesToExceptions="true"
-         convertWarningsToExceptions="true"
+         convertErrorsToExceptions="false"
+         convertNoticesToExceptions="false"
+         convertWarningsToExceptions="false"
 >
     <php>
         <ini name="error_reporting" value="-1" />
         <server name="KERNEL_DIR" value="app/" />
+    </php>
+
+    <php>
+        <env name="SYMFONY_DEPRECATIONS_HELPER" value="weak"/>
     </php>
 
     <testsuites>
