@@ -117,6 +117,38 @@ class ApiRequest
     }
 
     /**
+     * Authorize the route using username and password.
+     *
+     * @param string $username
+     * @param string $password
+     *
+     * @return ApiRequest
+     */
+    public function auth($username, $password)
+    {
+        $request = new ApiTestCase();
+
+        $response = $request->route('/api/auth/login')
+            ->parameters([
+                'username' => $username,
+                'password' => $password
+            ])
+            ->execute();
+
+        if ($response->getStatusCode() === 500) {
+            $jwt = '';
+        } else {
+            $jwt = $response->getContent();
+        }
+
+        $this->headers([
+            'HTTP_AUTHORIZATION' => $jwt
+        ]);
+
+        return $this;
+    }
+
+    /**
      * Execute the route
      *
      * @return null|\Symfony\Component\HttpFoundation\Response

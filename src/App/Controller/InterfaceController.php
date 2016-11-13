@@ -18,6 +18,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use App\Annotation\Permission;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Controller to handle interfaces.
@@ -91,7 +92,7 @@ class InterfaceController extends CController
      *
      * @param Request $request
      *
-     * @return JsonResponse
+     * @return Response
      */
     public function addInterfaceAction(Request $request)
     {
@@ -152,7 +153,11 @@ class InterfaceController extends CController
 
         $this->updateInterfaceColumns($api->getTableName(), [], $demoColumn);
 
-        return new JsonResponse('OK');
+        return new Response(
+            $this->serializer->serialize(
+                $api, 'json'
+            )
+        );
     }
 
     /**

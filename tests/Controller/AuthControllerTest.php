@@ -89,7 +89,7 @@ class AuthControllerTest extends ApiTestCase
             $this
                 ->route('/api/auth/me')
                 ->headers([
-                        'HTTP_AUTHORIZATION' => $jwt
+                    'HTTP_AUTHORIZATION' => $jwt
                 ])
                 ->execute()
                 ->getContent()
