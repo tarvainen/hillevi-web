@@ -29,8 +29,6 @@ class ImportController extends CController
     /**
      * Action for importing data to specific api.
      *
-     * @Permission("import:execute")
-     *
      * @param string  $id
      * @param string  $token
      * @param Request $request
