@@ -51,7 +51,7 @@ CREATE PROCEDURE sp_CalculateInspectionDataSummaries (
                   SUM(_keys.pasted)
 
       FROM        keystroke _keys
-      WHERE       _keys.user_id = UserId
+      WHERE       _keys.user_id = UserId AND _keys.startTime BETWEEN StartDate AND EndDate
       GROUP BY    ROUND(UNIX_TIMESTAMP(_keys.startTime) / @Interval);
 
     -- Key combos
@@ -63,7 +63,7 @@ CREATE PROCEDURE sp_CalculateInspectionDataSummaries (
                   MAX(_combos.endTime),
                   SUM(_combos.amount)
       FROM        key_combo _combos
-      WHERE       _combos.user_id = UserId
+      WHERE       _combos.user_id = UserId AND _combos.startTime BETWEEN StartDate AND EndDate
       GROUP BY    ROUND(UNIX_TIMESTAMP(_combos.startTime) / @Interval);
 
     -- Active time
@@ -75,7 +75,7 @@ CREATE PROCEDURE sp_CalculateInspectionDataSummaries (
                 MAX(_c.endTime),
                 SUM(_c.activeUsage) / (TIMESTAMPDIFF(SECOND, MIN(_c.startTime), MAX(_c.endTime)) * 1000) * 100
       FROM      computer_usage_snapshot _c
-      WHERE     _c.user_id = UserId
+      WHERE     _c.user_id = UserId AND _c.startTime BETWEEN StartDate AND EndDate
       GROUP BY  ROUND(UNIX_TIMESTAMP(_c.startTime) / @Interval);
 
     -- Mouse travel distance
@@ -87,7 +87,7 @@ CREATE PROCEDURE sp_CalculateInspectionDataSummaries (
                 MAX(x.endTime),
                 SUM(x.totalDistance)
       FROM      mouse_path x
-      WHERE     x.user_id = UserId
+      WHERE     x.user_id = UserId AND x.startTime BETWEEN StartDate AND EndDate
       GROUP BY  ROUND(UNIX_TIMESTAMP(x.startTime) / @Interval);
 
     /** 3. Select all from temporary table to the real table */
