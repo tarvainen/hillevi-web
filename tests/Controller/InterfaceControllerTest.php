@@ -64,7 +64,7 @@ class InterfaceControllerTest extends ApiTestCase
 
         // After creation just remove those interfaces
         if ($response->getStatusCode() === 200) {
-            $this->testInterfaceRemovalRouteStatusCode($response->getContent());
+            $this->checkInterfaceRemovalRouteStatusCode($response->getContent());
         }
     }
 
@@ -73,7 +73,7 @@ class InterfaceControllerTest extends ApiTestCase
      *
      * @param $data
      */
-    public function testInterfaceRemovalRouteStatusCode($data)
+    public function checkInterfaceRemovalRouteStatusCode($data)
     {
         if (empty($data)) {
             return;
