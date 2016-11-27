@@ -189,7 +189,7 @@ class GraphController extends CController
                         ROUND(%2$s(x.%3$s) * %10$s, 2) AS %3$s
                       FROM
                         TIME_DIMENSION T
-                      CROSS JOIN %4$s x ON DATE(x.%5$s) = T.FULLDATE 
+                      JOIN %4$s x ON DATE(x.%5$s) = T.FULLDATE 
                       WHERE
                         T.FULLDATE BETWEEN "%6$s" AND "%7$s" %8$s
                       GROUP BY %9$s
